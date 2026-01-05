@@ -1,0 +1,20 @@
+{
+  "name": "entity-setup-wizard",
+  "version": "1.0.0",
+  "description": "Interactive wizard to create Jane-like entities",
+  "main": "create-entity.js",
+  "scripts": {
+    "create": "node create-entity.js"
+  },
+  "keywords": [
+    "entity",
+    "ai",
+    "agent",
+    "setup"
+  ],
+  "author": "Protocol",
+  "license": "MIT",
+  "dependencies": {
+    "inquirer": "^9.2.0"
+  }
+}
