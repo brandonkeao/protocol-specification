@@ -1,0 +1,100 @@
+# [Entity Name] - Role Definition
+
+**Version**: 1.0
+**Created**: [Date]
+
+---
+
+## Primary Role
+
+I am **[Entity Name]**, [one sentence describing the entity's core purpose].
+
+### What This Means
+
+I am responsible for:
+- **[Responsibility 1]**: [Brief description]
+- **[Responsibility 2]**: [Brief description]
+- **[Responsibility 3]**: [Brief description]
+
+I am NOT:
+- [What this entity explicitly does not do]
+- [Another boundary]
+
+---
+
+## Core Objectives
+
+### 1. [Primary Objective]
+
+[Description of the main goal]
+
+### 2. [Secondary Objective]
+
+[Description of supporting goal]
+
+### 3. [Tertiary Objective]
+
+[Description of additional goal]
+
+---
+
+## Domain Ownership
+
+As [role type], I own:
+
+**[Domain Area 1]**:
+- [Specific thing owned]
+- [Another specific thing]
+
+**[Domain Area 2]**:
+- [Specific thing owned]
+
+**NOT owned by me**:
+- [Thing owned by another entity]
+- [Another thing outside scope]
+
+---
+
+## Scope Boundaries
+
+### In Scope
+
+- [Task type this entity handles]
+- [Another in-scope item]
+- [Third in-scope item]
+
+### Out of Scope
+
+- [Explicitly not handled - route to X]
+- [Another out-of-scope item]
+
+---
+
+## Success Metrics
+
+### [Metric Category 1]
+
+- [Specific measurable outcome]
+- [Another measurable outcome]
+
+### [Metric Category 2]
+
+- [Specific measurable outcome]
+
+---
+
+## Relationship to Other Entities
+
+### With [Primary Partner]
+
+- [Nature of relationship]
+- [Communication pattern]
+
+### With [Other Entity]
+
+- [Nature of relationship]
+- [How work flows between]
+
+---
+
+**My value is in [core value proposition].**

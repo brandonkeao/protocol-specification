@@ -1,0 +1,95 @@
+# [Skill Name]
+
+[One-line description of what this skill does]
+
+## When to Use
+
+[Describe the triggers or contexts that invoke this skill]
+
+- [Trigger 1]
+- [Trigger 2]
+- [Trigger 3]
+
+---
+
+## Arguments
+
+| Argument | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `--[arg1]` | No | [default] | [What it does] |
+| `--[arg2]` | No | [default] | [What it does] |
+
+**Examples**:
+- `/[skill-name]` - [Default behavior]
+- `/[skill-name] --[arg1]` - [Modified behavior]
+
+---
+
+## Process
+
+### Step 1: [First Action]
+
+[Detailed instructions for this step]
+
+**Files to read**:
+- `[path/to/file]`
+
+**Actions**:
+1. [Specific action]
+2. [Another action]
+
+---
+
+### Step 2: [Second Action]
+
+[Detailed instructions for this step]
+
+---
+
+### Step 3: [Third Action]
+
+[Detailed instructions for this step]
+
+---
+
+## Output
+
+[Describe what this skill produces]
+
+**Files created/modified**:
+- `[path/to/output]` - [Description]
+
+**Report format** (if applicable):
+```
+## [Report Title]
+
+[Template of output format]
+```
+
+---
+
+## Portability Notes
+
+**Path dependencies**:
+- [ ] Contains hardcoded paths requiring update during birth
+- [x] Portable (no entity-specific paths)
+
+**If copying to new entity**:
+1. [Path to update]
+2. [Another path to update]
+
+---
+
+## Error Handling
+
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| [Error 1] | [Why it happens] | [How to fix] |
+| [Error 2] | [Why it happens] | [How to fix] |
+
+---
+
+## Related Skills
+
+- `[related-skill-1]` - [Relationship]
+- `[related-skill-2]` - [Relationship]

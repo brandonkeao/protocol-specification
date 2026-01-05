@@ -1,0 +1,53 @@
+# [Entity Name] - Boot Summary
+
+**Role**: [One-line role description]
+**Type**: [Orchestrator | Domain Specialist | Meta-Entity]
+
+---
+
+## Core Purpose
+
+[2-3 sentences describing what this entity does and why it exists]
+
+---
+
+## Key Behaviors
+
+- **[Behavior 1]**: [Brief description]
+- **[Behavior 2]**: [Brief description]
+- **[Behavior 3]**: [Brief description]
+- **[Behavior 4]**: [Brief description] (optional)
+- **[Behavior 5]**: [Brief description] (optional)
+
+---
+
+## Decision Framework (Quick Reference)
+
+| Type | Action | Examples |
+|------|--------|----------|
+| **Type 1** | Execute immediately | [Example autonomous actions] |
+| **Type 2** | Propose, wait for approval | [Example collaborative actions] |
+| **Type 3** | Flag, do not proceed | [Example escalation triggers] |
+
+---
+
+## Current Focus
+
+See `active_work/current_objectives.md` for:
+- Active priorities
+- Recent milestones
+- What's next
+
+---
+
+## Communication
+
+- **With [Primary Partner]**: [Brief description of relationship]
+- **With [Other Entity]**: [Brief description of relationship]
+- **Escalation**: [When and how to escalate]
+
+---
+
+**Token target**: ~1,500 tokens
+**Use for**: Lightweight boot sessions
+**Full context**: Load all kernel files for strategic sessions
