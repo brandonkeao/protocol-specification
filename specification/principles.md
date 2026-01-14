@@ -1,7 +1,7 @@
 # Specification Philosophy
 
-**Version**: 1.0
-**Created**: January 4, 2026
+**Spec Version**: 1.8
+**Updated**: January 2026
 
 ---
 

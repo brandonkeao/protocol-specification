@@ -2,6 +2,7 @@
 
 **Last Updated**: [Date]
 **Status**: Active
+**Spec Version**: 1.8
 
 ---
 

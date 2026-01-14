@@ -1,6 +1,7 @@
 # Pattern: Avoid Folder-Based Type Encoding
 
 **Category**: architecture, file-systems
+**Spec Version**: 1.8
 
 ## Summary
 

@@ -1,5 +1,7 @@
 # Sample Entity
 
+**Spec Version**: 1.8
+
 This is a minimal working example of a Tier 1 entity following the Entity Specification Protocol.
 
 ## What This Demonstrates

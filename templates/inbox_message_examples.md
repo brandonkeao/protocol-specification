@@ -1,7 +1,8 @@
 # Inbox Message Examples
 
 **Purpose**: Concrete YAML frontmatter examples for cross-entity communication
-**Reference**: See `docs/ENTITY_SPEC.md` Section "Inbox Protocol" for full specification
+**Reference**: See `ENTITY_SPEC.md` Section "Inbox Protocol" for full specification
+**Spec Version**: 1.8
 
 ---
 

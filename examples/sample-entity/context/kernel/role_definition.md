@@ -3,6 +3,7 @@
 **Entity**: Sample Entity
 **Type**: Tier 1 (Minimal)
 **Created**: [Date]
+**Spec Version**: 1.8
 
 ---
 

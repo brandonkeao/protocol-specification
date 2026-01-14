@@ -1,6 +1,7 @@
 # Pattern: Index, Don't Load
 
 **Category**: context-engineering, token-efficiency
+**Spec Version**: 1.8
 
 ## Summary
 
