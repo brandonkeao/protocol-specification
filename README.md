@@ -8,26 +8,26 @@ Regular Claude forgets between conversations. Entities built to this spec mainta
 
 ## Quick Start (60 seconds)
 
-### Option 1: Copy a Working Example (Recommended)
+### Option 1: Use the Setup Wizard (Recommended)
 
 ```bash
 git clone https://github.com/brandonkeao/protocol-specification.git
-cp -r protocol-specification/examples/jane-starter ~/my-entity
-cd ~/my-entity
-claude
-```
-
-Then type `/session-start`. You're running a full AI entity with memory and skills!
-
-### Option 2: Use the Setup Wizard
-
-```bash
 cd protocol-specification/scripts
 npm install
 node create-entity.js
 ```
 
-Follow the prompts to create a customized entity.
+Answer a few questions and get a full AI entity with memory and skills. Then run `claude` and type `/session-start`!
+
+### Option 2: Copy a Pre-Built Example
+
+```bash
+cp -r protocol-specification/examples/jane-starter ~/my-entity
+cd ~/my-entity
+claude
+```
+
+Skip the questions - get a pre-configured entity immediately. Type `/session-start` to begin.
 
 ### Option 3: Start Minimal
 

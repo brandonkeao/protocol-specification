@@ -3,7 +3,7 @@
 /**
  * Entity Setup Wizard
  *
- * Interactive tool to create Jane-like entities following ENTITY_SPEC v1.7
+ * Interactive tool to create Jane-like entities following ENTITY_SPEC v1.8
  *
  * Usage:
  *   npm install
@@ -32,7 +32,7 @@ ${description}
 ---
 
 **Entity Tier**: ${tier}
-**Spec Version**: 1.7
+**Spec Version**: 1.8
 `,
 
   roleDefinition: (name, description, objectives) => `# ${name} - Role Definition
@@ -304,7 +304,7 @@ surface_when: [context triggers]
 async function main() {
   console.log('\n========================================');
   console.log('   Entity Setup Wizard');
-  console.log('   ENTITY_SPEC v1.7');
+  console.log('   ENTITY_SPEC v1.8');
   console.log('========================================\n');
 
   const answers = await inquirer.prompt([
@@ -332,10 +332,10 @@ async function main() {
       name: 'tier',
       message: 'Entity tier:',
       choices: [
-        { name: 'Tier 1 - Minimal (identity + objectives only)', value: 1 },
-        { name: 'Tier 2 - Full (memory, inbox, skills)', value: 2 }
+        { name: 'Tier 2 - Full with memory and skills (Recommended)', value: 2 },
+        { name: 'Tier 1 - Minimal (identity only, no memory)', value: 1 }
       ],
-      default: 1
+      default: 0
     },
     {
       type: 'input',
