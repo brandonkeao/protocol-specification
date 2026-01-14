@@ -180,6 +180,72 @@ The three layers answer different questions:
 
 ---
 
+## Memory Maintenance
+
+**Added in v1.8**: Guidelines for keeping memory healthy and useful.
+
+### Weekly Reviews (RECOMMENDED)
+
+Schedule regular reflection to prevent memory decay:
+
+| Cadence | Activity | Purpose |
+|---------|----------|---------|
+| Weekly | Review session exports | Identify patterns worth preserving |
+| Weekly | Check inbox status | Clear completed/dismissed items |
+| Monthly | Review learnings | Consolidate or deprecate |
+| Quarterly | Full memory audit | Archive or remove stale content |
+
+### Index Freshness
+
+Memory indexes should stay current:
+
+| State | Age | Action |
+|-------|-----|--------|
+| Fresh | <7 days | No action needed |
+| Aging | 7-14 days | Consider updating |
+| Stale | >14 days | Update at next session |
+
+**What to index**:
+- `memory/evolution/learnings/` - List with dates and summaries
+- `memory/evolution/decisions/` - List with dates and status
+- `memory/sessions/exports/` - Recent sessions (last 5-10)
+
+### Deprecation Protocol
+
+When content becomes outdated or irrelevant:
+
+1. **Evaluate** - Is this still useful? Referenced recently?
+2. **Archive** - Move to `memory/archive/[category]/`
+3. **Update indexes** - Remove from active indexes
+4. **Document** - Brief note on why archived
+
+### Archive Structure
+
+```
+memory/archive/
+├── sessions/           # Old session exports
+├── learnings/          # Superseded learnings
+├── decisions/          # Deprecated ADRs
+└── [YYYY-MM]/          # Date-based archival
+```
+
+**Archive triggers**:
+- Session exports older than 90 days
+- Learnings that have been superseded
+- Decisions that have been reversed or deprecated
+- Content not referenced in 6+ months
+
+### Maintenance Anti-Patterns
+
+| Anti-Pattern | Problem | Solution |
+|--------------|---------|----------|
+| Never archiving | Memory grows unbounded | Schedule quarterly cleanup |
+| Deleting instead of archiving | Lose historical context | Archive first, delete only if certain |
+| Stale indexes | Can't find relevant content | Update indexes weekly |
+| Orphaned content | Files with no index entry | Include in next audit |
+
+---
+
 ## References
 
 - **ENTITY_SPEC.md**: Complete specification with all requirements

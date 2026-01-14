@@ -129,12 +129,14 @@ Before creating the new agent:
 │   ├── sessions/
 │   │   └── exports/
 │   │       └── _template.md
-│   ├── learnings/
-│   │   └── _template.md
-│   ├── decisions/
-│   │   └── _template.md
+│   ├── evolution/
+│   │   ├── learnings/
+│   │   │   └── _template.md
+│   │   └── decisions/
+│   │       └── _template.md
 │   ├── inbox/                  # Flat structure with YAML frontmatter
 │   │   └── _README.md
+│   ├── archive/                # For deprecated content (v1.8)
 │   └── messages_to_[parent]/   # Escalation channel to parent
 └── .claude/
     ├── skills/
@@ -242,6 +244,30 @@ Create: `parent/memory/agent_births/YYYY-MM-DD_[agent-name].md`
 **Operational verification**:
 - [ ] Inbox configured for receiving handoffs
 - [ ] First session boot works
+
+### Step 7: Set Up Memory Maintenance (v1.8)
+
+New entities should be configured for healthy memory management from day one.
+
+**Create archive directory**:
+```bash
+mkdir -p [agent_name]/memory/archive
+```
+
+**Handle non-transferred content** in parent:
+- Content that was evaluated but not transferred should be documented
+- If it's truly domain-specific but wasn't needed, consider archiving it
+- Add note: "Considered for [agent_name] birth, retained in parent because [reason]"
+
+**Initialize maintenance expectations**:
+- [ ] Document weekly review cadence in operating_principles.md
+- [ ] Add memory index file (or update during first session)
+- [ ] Establish archive triggers specific to domain
+
+**Parent cleanup**:
+- Content that was transferred should be removed from parent (not duplicated)
+- Parent's memory index should be updated to remove transferred items
+- Optional: Archive the original files in parent instead of deleting
 
 ---
 

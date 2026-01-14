@@ -45,4 +45,4 @@ Escalate when:
 ---
 
 **Entity Tier**: 2 (Domain Specialist)
-**Spec Version**: 1.7
+**Spec Version**: 1.8

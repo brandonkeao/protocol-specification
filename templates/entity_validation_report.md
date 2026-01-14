@@ -131,6 +131,7 @@
 | 4.1.1 | Recent session export | [ ] | Last: [date] |
 | 4.1.2 | Objectives current | [ ] | Last updated: [date] |
 | 4.1.3 | No stale inbox | [ ] | Oldest pending: [date] |
+| 4.1.4 | Memory index freshness (T2-30) | [ ] | Last updated: [date] |
 
 ### 4.2 Token Metrics
 
@@ -221,5 +222,5 @@
 
 ---
 
-**Checklist Used**: docs/validation_checklist.md v1.0
-**Spec Reference**: ENTITY_SPEC.md v[X.X]
+**Checklist Used**: validation/checklist.md v1.3
+**Spec Reference**: ENTITY_SPEC.md v1.8

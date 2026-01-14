@@ -48,4 +48,4 @@ You are an **Orchestrator**:
 ---
 
 **Entity Tier**: 2 (Orchestrator)
-**Spec Version**: 1.7
+**Spec Version**: 1.8

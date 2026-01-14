@@ -1,9 +1,9 @@
 # Agent Birth Checklist
 
 **Purpose**: Copy-paste operational checklist for executing an agent birth
-**Reference**: See `docs/ENTITY_SPEC.md` (v1.4) for full entity specification
-**Reference**: See `birth_protocol/agent_birth_protocol.md` for birth protocol
-**Updated**: January 4, 2026
+**Reference**: See `ENTITY_SPEC.md` (v1.8) for full entity specification
+**Reference**: See `specification/birth_process.md` for birth protocol
+**Updated**: January 2026
 
 ---
 
@@ -18,10 +18,10 @@
 
 ### Approval & Planning
 
-- [ ] User (Brandon) explicitly approved birth
+- [ ] User explicitly approved birth
 - [ ] Scope boundaries defined
 - [ ] Routing rules drafted (what gets routed to this agent)
-- [ ] Agent directory location decided: `/Users/brandonkeao/AI Workspaces v4/[NAME]/`
+- [ ] Agent directory location decided
 - [ ] Persona/personality identified
 
 ---
@@ -32,8 +32,8 @@
 
 ```bash
 # Create base directory
-mkdir -p "/Users/brandonkeao/AI Workspaces v4/[AGENT_NAME]"
-cd "/Users/brandonkeao/AI Workspaces v4/[AGENT_NAME]"
+mkdir -p "[WORKSPACE]/[AGENT_NAME]"
+cd "[WORKSPACE]/[AGENT_NAME]"
 
 # Create context structure
 mkdir -p context/kernel
@@ -48,8 +48,8 @@ mkdir -p memory/sessions/transcripts
 mkdir -p memory/evolution/learnings
 mkdir -p memory/evolution/decisions
 mkdir -p memory/inbox
-mkdir -p memory/messages_to_jane
-mkdir -p memory/system_health
+mkdir -p memory/messages_to_[PARENT]
+mkdir -p memory/archive           # v1.8: For deprecated content
 
 # Create data structure (customize for domain)
 mkdir -p data/profiles
@@ -61,30 +61,30 @@ mkdir -p .claude/commands
 ```
 
 **Files to create**:
-- [ ] `CLAUDE.md` - Use template from `docs/templates/CLAUDE.md.template`
+- [ ] `CLAUDE.md` - Use template from `templates/CLAUDE.md.template`
 - [ ] `context/kernel/role_definition.md`
 - [ ] `context/kernel/operating_principles.md`
 - [ ] `context/kernel/persona_profile.md`
 - [ ] `context/kernel/[domain_knowledge].md` (optional)
 - [ ] `active_work/current_objectives.md`
 
-**Copy templates from Jane** (explicit commands):
+**Copy templates from parent or examples**:
 ```bash
 # Copy session export template
-cp "/Users/brandonkeao/AI Workspaces v4/jane/memory/sessions/exports/_template.md" \
-   "/Users/brandonkeao/AI Workspaces v4/[AGENT_NAME]/memory/sessions/exports/"
+cp "[PARENT]/memory/sessions/exports/_template.md" \
+   "[AGENT_NAME]/memory/sessions/exports/"
 
 # Copy learnings template
-cp "/Users/brandonkeao/AI Workspaces v4/jane/memory/evolution/learnings/_template.md" \
-   "/Users/brandonkeao/AI Workspaces v4/[AGENT_NAME]/memory/evolution/learnings/"
+cp "[PARENT]/memory/evolution/learnings/_template.md" \
+   "[AGENT_NAME]/memory/evolution/learnings/"
 
 # Copy decisions template
-cp "/Users/brandonkeao/AI Workspaces v4/jane/memory/evolution/decisions/_template.md" \
-   "/Users/brandonkeao/AI Workspaces v4/[AGENT_NAME]/memory/evolution/decisions/"
+cp "[PARENT]/memory/evolution/decisions/_template.md" \
+   "[AGENT_NAME]/memory/evolution/decisions/"
 
 # Copy inbox README (includes lifecycle documentation)
-cp "/Users/brandonkeao/AI Workspaces v4/jane/memory/inbox/_README.md" \
-   "/Users/brandonkeao/AI Workspaces v4/[AGENT_NAME]/memory/inbox/"
+cp "[PARENT]/memory/inbox/_README.md" \
+   "[AGENT_NAME]/memory/inbox/"
 ```
 
 **Verify templates created**:
@@ -98,17 +98,17 @@ cp "/Users/brandonkeao/AI Workspaces v4/jane/memory/inbox/_README.md" \
 **Sessions** (`memory/sessions/exports/`):
 - [ ] Identify sessions where >50% content is about new domain
 - [ ] Move qualifying sessions to new agent's `memory/sessions/exports/`
-- [ ] Leave mixed or non-domain sessions with Jane
+- [ ] Leave mixed or non-domain sessions with parent
 
 **Learnings** (`memory/evolution/learnings/`):
 - [ ] Identify domain-specific learnings
 - [ ] Move qualifying learnings to new agent's `memory/evolution/learnings/`
-- [ ] Leave cross-domain or general system learnings with Jane
+- [ ] Leave cross-domain or general system learnings with parent
 
 **Decisions** (`memory/evolution/decisions/`):
 - [ ] Identify domain architecture decisions
 - [ ] Move qualifying decisions to new agent's `memory/evolution/decisions/`
-- [ ] Leave system-wide operational decisions with Jane
+- [ ] Leave system-wide operational decisions with parent
 
 **Data** (`data/`):
 - [ ] Identify domain-specific data to move
@@ -119,36 +119,36 @@ cp "/Users/brandonkeao/AI Workspaces v4/jane/memory/inbox/_README.md" \
 
 **Copy core skills**:
 ```bash
-# From Jane's skills directory
-cp -r /jane/.claude/skills/session-start/ /[newagent]/.claude/skills/
-cp -r /jane/.claude/skills/session-export/ /[newagent]/.claude/skills/
-cp -r /jane/.claude/skills/handoff/ /[newagent]/.claude/skills/
-cp -r /jane/.claude/skills/entity-diagnostic/ /[newagent]/.claude/skills/
+# From parent's skills directory (or from examples/jane-starter)
+cp -r [PARENT]/.claude/skills/session-start/ [AGENT_NAME]/.claude/skills/
+cp -r [PARENT]/.claude/skills/session-export/ [AGENT_NAME]/.claude/skills/
+cp -r [PARENT]/.claude/skills/handoff/ [AGENT_NAME]/.claude/skills/
+cp -r [PARENT]/.claude/skills/entity-diagnostic/ [AGENT_NAME]/.claude/skills/
 ```
 
 **Update paths in each copied skill**:
-- [ ] `session-start/SKILL.md` - Replace `/jane/` with `/[newagent]/`
-- [ ] `session-export/SKILL.md` - Replace `/jane/` with `/[newagent]/`
-- [ ] `handoff/SKILL.md` - Replace `/jane/` with `/[newagent]/`
+- [ ] `session-start/SKILL.md` - Replace parent paths with new agent paths
+- [ ] `session-export/SKILL.md` - Replace parent paths with new agent paths
+- [ ] `handoff/SKILL.md` - Replace parent paths with new agent paths
 
-**Remove Jane-specific content from session-start**:
-- [ ] Agent ecosystem table (in boot report section - Jane-specific)
+**Remove parent-specific content from session-start**:
+- [ ] Agent ecosystem table (if parent-specific)
 - [ ] Quick wins surfacing (orchestrator-only)
-- [ ] Family context loading / Trello digest (Jane-specific)
+- [ ] Parent-specific context loading
 
-**Verify flat inbox structure in skills** (per ENTITY_SPEC v1.4):
+**Verify flat inbox structure in skills** (per ENTITY_SPEC v1.8):
 - [ ] handoff skill uses `memory/inbox/YYYY-MM-DD_handoff-from-*.md` (NOT nested folders)
 - [ ] session-export uses `memory/inbox/YYYY-MM-DD_skill-proposal-*.md` (NOT skill_proposals/)
 
 **Copy command wrappers**:
 ```bash
-cp /jane/.claude/commands/session-start.md /[newagent]/.claude/commands/
-cp /jane/.claude/commands/session-end.md /[newagent]/.claude/commands/
+cp [PARENT]/.claude/commands/session-start.md [AGENT_NAME]/.claude/commands/
+cp [PARENT]/.claude/commands/session-end.md [AGENT_NAME]/.claude/commands/
 ```
 
-### Step 4: Update Jane's Routing
+### Step 4: Update Parent's Routing
 
-Edit `jane/context/kernel/agent_coordination.md`:
+Edit parent's `context/kernel/agent_coordination.md`:
 
 - [ ] Add new agent to ecosystem table
 - [ ] Add routing rules for new domain
@@ -156,15 +156,15 @@ Edit `jane/context/kernel/agent_coordination.md`:
 
 ### Step 5: Log Birth Event
 
-Create: `jane/memory/evolution/agent_births/YYYY-MM-DD_[agent-name].md`
+Create: `[PARENT]/memory/evolution/agent_births/YYYY-MM-DD_[agent-name].md`
 
 ```markdown
 # Agent Birth Event: [Agent Name]
 
 **Date**: [Date]
-**Parent Agent**: Jane (AI Agent Chief of Staff)
+**Parent Agent**: [Parent Name]
 **Child Agent**: [Agent Name]
-**Location**: `/Users/brandonkeao/AI Workspaces v4/[agent_dir]/`
+**Location**: [workspace path]
 
 ---
 
@@ -206,7 +206,7 @@ Create: `jane/memory/evolution/agent_births/YYYY-MM-DD_[agent-name].md`
 - [Trigger 2]
 - [Trigger 3]
 
-**Keep with Jane when**:
+**Keep with Parent when**:
 - [Exception 1]
 - [Exception 2]
 
@@ -214,10 +214,10 @@ Create: `jane/memory/evolution/agent_births/YYYY-MM-DD_[agent-name].md`
 
 ## Relationship Model
 
-- **Parent-child with independence** - Jane gave birth, [Agent Name] evolves independently
-- **Hub-spoke coordination** - Jane orchestrates, [Agent Name] executes in domain
-- **Escalation path** - [Agent Name] escalates to Jane when blocked
-- **Communication** - Via messages_to_jane/ and inbox handoffs
+- **Parent-child with independence** - Parent gave birth, [Agent Name] evolves independently
+- **Hub-spoke coordination** - Parent orchestrates, [Agent Name] executes in domain
+- **Escalation path** - [Agent Name] escalates to parent when blocked
+- **Communication** - Via messages_to_[parent]/ and inbox handoffs
 ```
 
 ### Step 6: Run Entity Diagnostic
@@ -226,7 +226,8 @@ Before declaring birth complete, validate compliance:
 
 ```bash
 # Start a session with the new agent
-cd "/Users/brandonkeao/AI Workspaces v4/[AGENT_NAME]"
+cd "[WORKSPACE]/[AGENT_NAME]"
+claude
 # Run: /entity-diagnostic
 ```
 
@@ -234,7 +235,7 @@ cd "/Users/brandonkeao/AI Workspaces v4/[AGENT_NAME]"
 - [ ] All required directories: PASS
 - [ ] All required files: PASS
 - [ ] Skills configured correctly: PASS
-- [ ] Paths point to correct entity (not Jane): PASS
+- [ ] Paths point to correct entity (not parent): PASS
 - [ ] Inbox uses flat structure: PASS
 
 ### Step 7: Verify
@@ -248,37 +249,54 @@ cd "/Users/brandonkeao/AI Workspaces v4/[AGENT_NAME]"
 **Skill verification**:
 - [ ] New agent can run `/session-start`
 - [ ] New agent can run `/session-end`
-- [ ] Paths in skills point to new agent (not Jane)
+- [ ] Paths in skills point to new agent (not parent)
 
 **Communication verification**:
-- [ ] `messages_to_jane/` directory exists
+- [ ] `messages_to_[parent]/` directory exists
 - [ ] Escalation path documented in CLAUDE.md
 - [ ] Inbox configured for receiving handoffs
 
 **Operational verification**:
 - [ ] First session boot works correctly
-- [ ] Agent can access shared_memory
 - [ ] Agent understands its scope boundaries
 
-**Path verification** (common issues from ENTITY_SPEC v1.4):
+**Path verification** (common issues from ENTITY_SPEC v1.8):
 - [ ] Uses `memory/sessions/exports/` (NOT `session_exports/`)
 - [ ] Uses `active_work/current_objectives.md` (NOT `README.md`)
 - [ ] Inbox is flat with YAML frontmatter (NO subfolders)
+
+### Step 8: Set Up Memory Maintenance (v1.8)
+
+**Archive directory ready**:
+- [ ] `memory/archive/` directory exists
+
+**Handle non-transferred content in parent**:
+- [ ] Content evaluated but not transferred is documented
+- [ ] Add notes: "Considered for [agent_name] birth, retained because [reason]"
+
+**Initialize maintenance expectations**:
+- [ ] Document weekly review cadence in operating_principles.md
+- [ ] Plan for memory index creation (first session or manual)
+- [ ] Establish archive triggers specific to domain
+
+**Parent cleanup**:
+- [ ] Transferred content removed from parent (not duplicated)
+- [ ] Parent's memory index updated to remove transferred items
 
 ---
 
 ## Post-Birth
 
 - [ ] Run `/entity-diagnostic` on new agent
-- [ ] Verify Jane's memory no longer contains moved domain content
+- [ ] Verify parent's memory no longer contains moved domain content
 - [ ] Monitor first few sessions for any issues
-- [ ] Update INFRASTRUCTURE_OVERVIEW.md if significant changes
+- [ ] Update documentation if significant changes
 
 ---
 
 ## Quick Reference: What Moves vs. Stays
 
-| Content Type | Moves to New Agent | Stays with Jane |
+| Content Type | Moves to New Agent | Stays with Parent |
 |--------------|-------------------|-----------------|
 | Sessions | >50% domain content | Mixed or non-domain |
 | Learnings | Domain-specific patterns | Cross-domain patterns |

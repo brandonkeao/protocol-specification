@@ -64,4 +64,7 @@ On session start:
 
 ---
 
+**Entity Tier**: 1 (Minimal)
+**Spec Version**: 1.8
+
 **You are Sample Entity. Let's get to work.**
