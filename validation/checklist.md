@@ -1,225 +1,250 @@
 # Entity Validation Checklist
 
-**Version**: 1.0
-**Derived From**: ENTITY_SPEC.md v1.6
+**Version**: 1.3
+**Derived From**: ENTITY_SPEC.md v1.8
 **Purpose**: Systematic validation of entities against specification
+
+---
+
+## Quick Reference
+
+| Tier | Required Items | Use Case |
+|------|----------------|----------|
+| **Tier 1** | 8 items | Minimal viable entity - identity and objectives |
+| **Tier 2** | 38 items | Full entity - memory, inbox, skills |
+| **Role-Specific** | 4-5 items | Based on Orchestrator/Domain Specialist/Meta-Entity |
+| **Optional** | 11 items | Nice-to-have, not required |
+
+**New users**: Start with Tier 1. Upgrade to Tier 2 when you need memory persistence and skills.
 
 ---
 
 ## How to Use This Checklist
 
-1. **Determine entity tier and role** (Tier 1/2, Orchestrator/Domain Specialist/Meta-Entity)
-2. **Run applicable sections** based on tier and role
-3. **Record status** for each item: PASS / WARN / FAIL
-4. **Document findings** in validation report template
-5. **Prioritize remediation** by severity
+1. **Determine your tier**: Tier 1 (minimal) or Tier 2 (full)
+2. **Run required checks** for your tier
+3. **Run role-specific checks** if applicable
+4. **Record status**: PASS / WARN / FAIL
+5. **Prioritize fixes**: CRITICAL → MEDIUM → LOW
 
 ### Severity Definitions
 
 | Severity | Impact | Timeline |
 |----------|--------|----------|
-| **CRITICAL** | Blocks core functionality, breaks spec compliance | Immediate (same session) |
-| **MEDIUM** | Degrades functionality, causes friction | Within 2-3 sessions |
-| **LOW** | Minor deviation, cosmetic issue | When convenient |
+| **CRITICAL** | Blocks core functionality | Immediate |
+| **MEDIUM** | Degrades functionality | Within 2-3 sessions |
+| **LOW** | Minor deviation | When convenient |
 
 ---
 
-## Section 1: Structure Validation
+## Tier 1 Required (8 items)
 
-### 1.1 Required Files (All Tiers)
+**Minimum viable entity** - These are required for basic entity functionality.
 
-| Item | Check | Tier 1 | Tier 2 | Severity |
-|------|-------|--------|--------|----------|
-| 1.1.1 | `CLAUDE.md` exists at workspace root | REQ | REQ | CRITICAL |
-| 1.1.2 | `context/kernel/role_definition.md` exists | REQ | REQ | CRITICAL |
-| 1.1.3 | `active_work/current_objectives.md` exists | REQ | REQ | CRITICAL |
+### Core Files
 
-### 1.2 Tier 2 Required Structure
+| # | Check | Severity |
+|---|-------|----------|
+| T1-1 | `CLAUDE.md` exists at workspace root | CRITICAL |
+| T1-2 | `context/kernel/role_definition.md` exists | CRITICAL |
+| T1-3 | `active_work/current_objectives.md` exists | CRITICAL |
 
-| Item | Check | Severity |
-|------|-------|----------|
-| 1.2.1 | `context/kernel/operating_principles.md` exists | MEDIUM |
-| 1.2.2 | `context/kernel/persona_profile.md` exists | MEDIUM |
-| 1.2.3 | `memory/sessions/exports/` directory exists | CRITICAL |
-| 1.2.4 | `memory/sessions/exports/_template.md` exists | LOW |
-| 1.2.5 | `memory/evolution/learnings/` directory exists | MEDIUM |
-| 1.2.6 | `memory/evolution/decisions/` directory exists | MEDIUM |
-| 1.2.7 | `memory/inbox/` directory exists | CRITICAL |
-| 1.2.8 | `memory/inbox/_README.md` exists | LOW |
-| 1.2.9 | `.claude/skills/` directory exists | CRITICAL |
+### Identity Verification
 
-### 1.3 Optional Structure (Check if Present)
+| # | Check | Severity |
+|---|-------|----------|
+| T1-4 | CLAUDE.md contains boot sequence instructions | CRITICAL |
+| T1-5 | CLAUDE.md references correct kernel file paths | CRITICAL |
+| T1-6 | role_definition.md defines entity identity | CRITICAL |
+| T1-7 | role_definition.md defines scope (in-scope/out-of-scope) | MEDIUM |
+| T1-8 | current_objectives.md has at least one priority | MEDIUM |
 
-| Item | Check | When Required | Severity if Missing |
-|------|-------|---------------|---------------------|
-| 1.3.1 | `context/kernel/_summary.md` | Orchestrator role | LOW |
-| 1.3.2 | `context/conditional/` directory | Has conditional content | LOW |
-| 1.3.3 | `data/` directory structure | Has domain data | LOW |
-| 1.3.4 | `memory/evolution/reviews/` | Conducts reviews | LOW |
+### Tier 1 Summary
 
----
+```
+Required structure:
+entity/
+├── CLAUDE.md           ← Boot instructions
+├── context/
+│   └── kernel/
+│       └── role_definition.md  ← Identity
+└── active_work/
+    └── current_objectives.md   ← Current focus
+```
 
-## Section 2: Skill Verification
-
-### 2.1 Core Skills Present
-
-| Item | Check | Severity |
-|------|-------|----------|
-| 2.1.1 | `session-start/SKILL.md` exists in `.claude/skills/` | CRITICAL |
-| 2.1.2 | `session-export/SKILL.md` exists in `.claude/skills/` | CRITICAL |
-| 2.1.3 | `handoff/SKILL.md` exists in `.claude/skills/` | MEDIUM |
-| 2.1.4 | `entity-diagnostic/SKILL.md` exists in `.claude/skills/` | MEDIUM |
-
-### 2.2 Skill Path Verification
-
-| Item | Check | Severity |
-|------|-------|----------|
-| 2.2.1 | No `/jane/` paths in skills (unless this IS Jane) | CRITICAL |
-| 2.2.2 | No parent entity paths in skills | CRITICAL |
-| 2.2.3 | Paths reference correct entity workspace | CRITICAL |
-| 2.2.4 | SKILL.md files have required sections (When to Use, Process, Output) | MEDIUM |
-
-### 2.3 Command Wrappers
-
-| Item | Check | Severity |
-|------|-------|----------|
-| 2.3.1 | `.claude/commands/` directory exists (if using commands) | LOW |
-| 2.3.2 | Command files reference correct skill paths | MEDIUM |
+**Pass criteria**: All 8 items PASS or WARN (no CRITICAL failures)
 
 ---
 
-## Section 3: Protocol Alignment
+## Tier 2 Required (38 items)
 
-### 3.1 Inbox Protocol
+**Full entity** - Includes all Tier 1 items plus memory, inbox, and skills.
 
-| Item | Check | Severity |
-|------|-------|----------|
-| 3.1.1 | Inbox uses flat structure (no subfolders like `handoffs/`) | CRITICAL |
-| 3.1.2 | All inbox items have YAML frontmatter | CRITICAL |
-| 3.1.3 | Frontmatter includes: type, status, priority, created | MEDIUM |
-| 3.1.4 | No autonomous status changes (human-in-the-loop) | CRITICAL |
+### Tier 1 Items (8 items)
 
-### 3.2 Session Continuity
+All Tier 1 items (T1-1 through T1-8) are required for Tier 2.
 
-| Item | Check | Severity |
-|------|-------|----------|
-| 3.2.1 | Session-start skill loads kernel context | CRITICAL |
-| 3.2.2 | Session-start skill checks inbox | CRITICAL |
-| 3.2.3 | Session-export skill creates structured exports | MEDIUM |
-| 3.2.4 | Exports follow template format | LOW |
+### Additional Kernel Files (4 items)
 
-### 3.3 File Naming Conventions
+| # | Check | Severity |
+|---|-------|----------|
+| T2-1 | `context/kernel/operating_principles.md` exists | MEDIUM |
+| T2-2 | `context/kernel/persona_profile.md` exists | MEDIUM |
+| T2-3 | Kernel files total < 1000 lines | MEDIUM |
+| T2-4 | No duplicate content across kernel files | LOW |
 
-| Item | Check | Severity |
-|------|-------|----------|
-| 3.3.1 | Inbox items: `YYYY-MM-DD_[slug].md` | MEDIUM |
-| 3.3.2 | Session exports: `YYYY-MM-DD_[slug].md` | MEDIUM |
-| 3.3.3 | Learnings: `YYYY-MM-DD_[slug].md` | LOW |
-| 3.3.4 | No spaces in filenames (use hyphens) | LOW |
+### Memory Structure (9 items)
 
----
+| # | Check | Severity |
+|---|-------|----------|
+| T2-5 | `memory/sessions/exports/` directory exists | CRITICAL |
+| T2-6 | `memory/evolution/learnings/` directory exists | MEDIUM |
+| T2-7 | `memory/evolution/decisions/` directory exists | MEDIUM |
+| T2-8 | `memory/inbox/` directory exists | CRITICAL |
+| T2-9 | At least one session export exists | WARN if missing |
+| T2-10 | `current_objectives.md` updated in last 14 days | MEDIUM |
+| T2-11 | No stale inbox items (pending > 14 days) | MEDIUM |
+| T2-12 | At least one session export in last 30 days | WARN if missing |
+| T2-30 | Memory indexes updated in last 7 days (if sessions exist) | MEDIUM |
 
-## Section 4: Operational Health
+### Skills Structure (8 items)
 
-### 4.1 Recent Activity
+| # | Check | Severity |
+|---|-------|----------|
+| T2-13 | `.claude/skills/` directory exists | CRITICAL |
+| T2-14 | `.claude/skills/_index.md` exists | MEDIUM |
+| T2-15 | `session-start/SKILL.md` exists | CRITICAL |
+| T2-16 | `session-export/SKILL.md` exists | CRITICAL |
+| T2-17 | No `/jane/` paths in skills (unless this IS Jane) | CRITICAL |
+| T2-18 | No parent entity paths in skills | CRITICAL |
+| T2-19 | Paths reference correct entity workspace | CRITICAL |
+| T2-20 | SKILL.md files have required sections | MEDIUM |
 
-| Item | Check | Severity |
-|------|-------|----------|
-| 4.1.1 | At least one session export in last 30 days | WARN if missing |
-| 4.1.2 | `current_objectives.md` updated in last 14 days | MEDIUM |
-| 4.1.3 | No stale inbox items (pending > 14 days) | MEDIUM |
+### Inbox Protocol (4 items)
 
-### 4.2 Token Consciousness
+| # | Check | Severity |
+|---|-------|----------|
+| T2-21 | Inbox uses flat structure (no subfolders) | CRITICAL |
+| T2-22 | All inbox items have YAML frontmatter | CRITICAL |
+| T2-23 | Frontmatter includes: type, status, priority, created | MEDIUM |
+| T2-24 | No autonomous status changes (human-in-the-loop) | CRITICAL |
 
-| Item | Check | Severity |
-|------|-------|----------|
-| 4.2.1 | Kernel files total < 1000 lines | MEDIUM |
-| 4.2.2 | Boot sequence respects token targets | LOW |
-| 4.2.3 | No duplicate content across kernel files | LOW |
+### Session Continuity (5 items)
 
-### 4.3 Clean State
+| # | Check | Severity |
+|---|-------|----------|
+| T2-25 | Session-start skill loads kernel context | CRITICAL |
+| T2-26 | Session-start skill checks inbox | CRITICAL |
+| T2-27 | Session-export skill creates structured exports | MEDIUM |
+| T2-28 | Exports follow template format | LOW |
+| T2-29 | Session-export writes to `memory/sessions/exports/` (not `session_exports/`) | CRITICAL |
 
-| Item | Check | Severity |
-|------|-------|----------|
-| 4.3.1 | No orphaned files at workspace root (except CLAUDE.md) | LOW |
-| 4.3.2 | No empty directories in required structure | LOW |
-| 4.3.3 | Templates present for recurring file types | LOW |
+### Tier 2 Summary
 
----
+```
+Required structure (in addition to Tier 1):
+entity/
+├── context/
+│   └── kernel/
+│       ├── operating_principles.md
+│       └── persona_profile.md
+├── memory/
+│   ├── sessions/
+│   │   └── exports/
+│   ├── evolution/
+│   │   ├── learnings/
+│   │   └── decisions/
+│   └── inbox/
+└── .claude/
+    └── skills/
+        ├── _index.md
+        ├── session-start/SKILL.md
+        └── session-export/SKILL.md
+```
 
-## Section 5: Role-Specific Validation
-
-### 5.1 Orchestrator Requirements
-
-*Run only for entities with Orchestrator role*
-
-| Item | Check | Severity |
-|------|-------|----------|
-| 5.1.1 | `context/kernel/agent_coordination.md` exists | CRITICAL |
-| 5.1.2 | `context/kernel/_summary.md` exists | MEDIUM |
-| 5.1.3 | `memory/evolution/agent_births/` exists | MEDIUM |
-| 5.1.4 | All spawned entities listed in coordination file | MEDIUM |
-| 5.1.5 | Routing rules defined for each entity | MEDIUM |
-
-### 5.2 Domain Specialist Requirements
-
-*Run only for entities with Domain Specialist role*
-
-| Item | Check | Severity |
-|------|-------|----------|
-| 5.2.1 | No coordination file (defers to parent) | LOW |
-| 5.2.2 | `memory/messages_to_[parent]/` exists | MEDIUM |
-| 5.2.3 | Parent escalation path documented in CLAUDE.md | MEDIUM |
-| 5.2.4 | Domain-specific context files present | MEDIUM |
-
-### 5.3 Meta-Entity Requirements
-
-*Run only for entities with Meta-Entity role*
-
-| Item | Check | Severity |
-|------|-------|----------|
-| 5.3.1 | `context/kernel/specification_philosophy.md` exists | CRITICAL |
-| 5.3.2 | `docs/` directory exists at workspace root | CRITICAL |
-| 5.3.3 | Canonical specification maintained in `docs/` | CRITICAL |
-| 5.3.4 | Version history tracked (CHANGELOG.md) | MEDIUM |
-| 5.3.5 | Peer communication path defined (not escalation) | MEDIUM |
+**Pass criteria**: All Tier 1 + Tier 2 items PASS or WARN (no CRITICAL failures)
 
 ---
 
-## Section 6: Semantic Clarity
+## Role-Specific Requirements
 
-### 6.1 Three-Layer Separation
+*Run only the section matching your entity's role*
 
-| Item | Check | Severity |
-|------|-------|----------|
-| 6.1.1 | `context/` contains only identity/instructions | MEDIUM |
-| 6.1.2 | `memory/` contains only accumulated experience | MEDIUM |
-| 6.1.3 | `data/` contains only external facts | MEDIUM |
-| 6.1.4 | No bleed between layers (e.g., profiles in context/) | MEDIUM |
+### Orchestrator (5 items)
 
-### 6.2 Directory Purpose
+| # | Check | Severity |
+|---|-------|----------|
+| O-1 | `context/kernel/agent_coordination.md` exists | CRITICAL |
+| O-2 | `context/kernel/_summary.md` exists | MEDIUM |
+| O-3 | `memory/evolution/agent_births/` exists | MEDIUM |
+| O-4 | All spawned entities listed in coordination file | MEDIUM |
+| O-5 | Routing rules defined for each entity | MEDIUM |
 
-| Item | Check | Severity |
-|------|-------|----------|
-| 6.2.1 | Each directory has clear, distinct purpose | LOW |
-| 6.2.2 | No overlapping directories serving same function | MEDIUM |
-| 6.2.3 | Readme files explain directory purpose where needed | LOW |
+### Domain Specialist (4 items)
+
+| # | Check | Severity |
+|---|-------|----------|
+| D-1 | No coordination file (defers to parent) | LOW |
+| D-2 | `memory/messages_to_[parent]/` exists | MEDIUM |
+| D-3 | Parent escalation path documented in CLAUDE.md | MEDIUM |
+| D-4 | Domain-specific context files present | MEDIUM |
+
+### Meta-Entity (5 items)
+
+| # | Check | Severity |
+|---|-------|----------|
+| M-1 | `context/kernel/specification_philosophy.md` exists | CRITICAL |
+| M-2 | `docs/` directory exists at workspace root | CRITICAL |
+| M-3 | Canonical specification maintained in `docs/` | CRITICAL |
+| M-4 | Version history tracked (CHANGELOG.md) | MEDIUM |
+| M-5 | Peer communication path defined (not escalation) | MEDIUM |
 
 ---
 
-## Common Issues Reference
+## Optional (11 items)
 
-### Frequently Found Issues
+*These are recommended but not required for compliance*
 
-| Issue | Typical Cause | Remediation |
-|-------|---------------|-------------|
-| `/jane/` paths in skills | Copied without update | Search/replace entity paths |
-| Nested inbox folders | Pre-v1.3 structure | Flatten to single folder, add frontmatter |
-| Missing persona_profile.md | Birth oversight | Create from template |
-| Stale objectives | Inactive period | Update with current focus |
-| Extra root directories | Organic growth | Move to appropriate layer or archive |
+### Structure
 
-### Quick Diagnostic Commands
+| # | Check | Notes |
+|---|-------|-------|
+| OPT-1 | `context/kernel/_summary.md` exists | Useful if kernel >500 lines |
+| OPT-2 | `context/conditional/` directory exists | For role-based context |
+| OPT-3 | `data/` directory structure exists | For domain data |
+| OPT-4 | `memory/evolution/reviews/` exists | For entities doing reviews |
+| OPT-5 | `memory/sessions/exports/_template.md` exists | For consistent exports |
+| OPT-6 | `memory/inbox/_README.md` exists | Documents inbox usage |
+| OPT-7 | `.claude/commands/` directory exists | For command wrappers |
+| OPT-8 | `memory/graph/` directory exists | For context graph (v1.7+) |
+
+### Skills
+
+| # | Check | Notes |
+|---|-------|-------|
+| OPT-9 | `handoff/SKILL.md` exists | For cross-entity communication |
+| OPT-10 | `entity-diagnostic/SKILL.md` exists | For self-validation |
+| OPT-11 | `expert-review/SKILL.md` exists | For expert perspectives (v1.7+) |
+
+---
+
+## File Naming Conventions
+
+| File Type | Pattern | Example |
+|-----------|---------|---------|
+| Inbox items | `YYYY-MM-DD_[slug].md` | `2026-01-05_task-request.md` |
+| Session exports | `YYYY-MM-DD_[slug].md` | `2026-01-05_planning-session.md` |
+| Learnings | `YYYY-MM-DD_[slug].md` | `2026-01-05_api-patterns.md` |
+| Decisions | `NNNN-[slug].md` | `0001-use-typescript.md` |
+
+**Rules**:
+- No spaces in filenames (use hyphens)
+- Lowercase preferred
+- Dates in ISO format (YYYY-MM-DD)
+
+---
+
+## Quick Diagnostic Commands
 
 ```bash
 # Check for wrong paths in skills
@@ -233,39 +258,55 @@ find memory/inbox -type f -name "*.md"
 
 # Check for stale inbox items
 find memory/inbox -name "*.md" -mtime +14
+
+# List all skills
+ls -la .claude/skills/*/SKILL.md
 ```
+
+---
+
+## Common Issues Reference
+
+| Issue | Cause | Fix |
+|-------|-------|-----|
+| `/jane/` paths in skills | Copied without update | Search/replace entity paths |
+| Nested inbox folders | Pre-v1.3 structure | Flatten, add frontmatter |
+| Missing persona_profile.md | Birth oversight | Create from template |
+| Stale objectives | Inactive period | Update current focus |
+| Extra root directories | Organic growth | Move to appropriate layer |
+| Entity doesn't know identity | CLAUDE.md wrong paths | Verify kernel paths |
 
 ---
 
 ## Validation Workflow
 
 ```
-1. Identify entity tier and role
+1. Determine tier
    │
-   ├─→ Tier 1: Sections 1.1, 2 (basic), 4.3
+   ├─→ Tier 1 (8 items)
+   │   └─→ Done
    │
-   └─→ Tier 2: All sections
+   └─→ Tier 2 (38 items)
          │
-         ├─→ Orchestrator: + Section 5.1
-         ├─→ Domain Specialist: + Section 5.2
-         └─→ Meta-Entity: + Section 5.3
+         └─→ Add role-specific (4-5 items)
+             │
+             ├─→ Orchestrator: +5 items
+             ├─→ Domain Specialist: +4 items
+             └─→ Meta-Entity: +5 items
 
 2. Run checks, record results
 
-3. Aggregate findings:
-   - Count CRITICAL items
-   - Count MEDIUM items
-   - Count LOW items
+3. Count by severity:
+   - CRITICAL failures: Block deployment
+   - MEDIUM failures: Plan remediation
+   - LOW failures: Note for later
 
-4. Generate validation report
+4. Fix CRITICAL items first
 
-5. Prioritize remediation:
-   - CRITICAL first (blocking)
-   - MEDIUM next (friction)
-   - LOW as time permits
+5. Generate validation report
 ```
 
 ---
 
 **Maintained by**: Protocol (Meta-Entity)
-**Spec Reference**: ENTITY_SPEC.md v1.6
+**Spec Reference**: ENTITY_SPEC.md v1.8

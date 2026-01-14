@@ -1,8 +1,8 @@
 # Entity Specification Protocol
 
-**Version**: 1.6
+**Version**: 1.8
 **Created**: January 2026
-**Updated**: January 4, 2026
+**Updated**: January 12, 2026
 **Purpose**: Canonical specification for Jane-like entities
 
 ---
@@ -403,6 +403,30 @@ data/
 | Domain data | Indefinite | Archive when obsolete |
 | Sources | 1 year | Move to `archive/sources/` |
 
+#### Example Patterns (Optional)
+
+**Project Documentation** - For entities with significant project work:
+```
+data/projects/
+├── [project_name]/
+│   ├── requirements.md      # Project requirements and scope
+│   ├── architecture.md      # Technical decisions (if applicable)
+│   └── changelog.md         # Version history
+└── _archive/                # Completed or abandoned projects
+    └── [old_project]/
+```
+
+**Meeting Records** - For entities managing stakeholder relationships:
+```
+data/meetings/
+├── _index.md               # Navigation and quick reference
+├── _template.md            # Meeting record template
+└── with_[person]/          # Per-person chronological records
+    └── YYYY-MM-DD_topic.md
+```
+
+Meeting records should link to `memory/evolution/decisions/` when decisions are captured.
+
 ---
 
 ## Core Skills
@@ -422,6 +446,19 @@ Full entities must have these skills in `.claude/skills/`:
 |-------|---------|-------------|
 | `infra-review` | Update INFRASTRUCTURE_OVERVIEW.md | Requires path updates |
 | `update-protocol` | Update ENTITY_SPEC.md and skills index | Portable |
+
+**Expert review skill** (recommended for all Tier 2 entities):
+
+| Skill | Purpose | Portability |
+|-------|---------|-------------|
+| `expert-review` | Apply expert perspective to work with configurable lens | Portable |
+
+The `expert-review` skill provides configurable expert perspectives via `--lens` parameter:
+- `/expert-review --lens=security` - Security-focused review
+- `/expert-review --lens=architecture` - Architecture review
+- `/expert-review --lens=product` - Product management perspective
+
+This pattern replaces the deprecated "execution lens" approach by consolidating expert thinking into a single configurable skill.
 
 ### Skill Structure
 
@@ -541,6 +578,20 @@ Update paths in command files if they contain absolute references.
 2. Run `/session-start` - verify boot works
 3. Run `/session-end` - verify export created
 4. Check no errors about missing paths
+
+### Portability Validation
+
+Skills SHOULD be checked for path portability during entity diagnostics.
+
+**Validation checks**:
+- Skill files should not contain hardcoded paths to other entities (e.g., `/jane/`)
+- Absolute paths should reference the current entity's root
+- Session-export paths should use `memory/sessions/exports/` not legacy `session_exports/`
+
+**Recommended practice**:
+- Use relative paths within skill files where possible
+- Document path dependencies at the top of SKILL.md
+- Run `/entity-diagnostic` after skill copying to verify paths
 
 ---
 
@@ -673,6 +724,144 @@ pending → acknowledged → completed
 
 ---
 
+## Memory Maintenance
+
+### Weekly Reviews (Recommended)
+
+Tier 2 entities SHOULD conduct weekly reviews to maintain memory health and prevent knowledge drift.
+
+**Location**: `memory/evolution/reviews/`
+
+**File naming**: `YYYY-Wnn_weekly.md` (e.g., `2026-W02_weekly.md`)
+
+**Review template**:
+```markdown
+# Weekly Review: YYYY-Wnn
+
+**Period**: [Start date] - [End date]
+**Sessions**: [Number of sessions this week]
+
+## Summary
+
+[2-3 sentence summary of the week's work]
+
+## Accomplishments
+
+- [Key accomplishment 1]
+- [Key accomplishment 2]
+
+## Learnings Captured
+
+[List any new learnings added this week, or note "None"]
+
+## Decisions Made
+
+[List any ADRs created, or note "None"]
+
+## Open Threads
+
+[Threads from session exports that remain unresolved]
+
+## Index Status
+
+| Index | Last Updated | Status |
+|-------|--------------|--------|
+| Learnings | [date] | [Fresh/Stale] |
+| Decisions | [date] | [Fresh/Stale] |
+
+## Next Week Focus
+
+[Priorities for upcoming week]
+```
+
+**What reviews should check**:
+1. Index freshness (learnings, decisions)
+2. Open threads from session exports
+3. Stale inbox items
+4. Memory growth and cleanup needs
+
+**Cadence**: Weekly (RECOMMENDED), or bi-weekly for lower-activity entities.
+
+### Index Maintenance
+
+Memory indexes provide awareness of accumulated knowledge without loading full content.
+
+**Index locations**:
+- `memory/evolution/learnings/_index.md`
+- `memory/evolution/decisions/_index.md`
+
+**Index format** (RECOMMENDED):
+```markdown
+# [Category] Index
+
+**Last Updated**: YYYY-MM-DD
+**Total Items**: [count]
+
+## Items
+
+| Date | Title | Summary |
+|------|-------|---------|
+| YYYY-MM-DD | [Title] | [1-line summary] |
+```
+
+**Freshness guidelines**:
+
+| Age Since Last Update | Status | Action |
+|-----------------------|--------|--------|
+| < 7 days | Fresh | None |
+| 7-14 days | Aging | Update in next session |
+| > 14 days | Stale | Update immediately |
+
+**When to update indexes**:
+- After creating new learnings or decisions
+- During weekly reviews
+- When session-export adds to memory
+
+**Staleness warning**: entity-diagnostic should WARN if indexes are >7 days stale with active sessions in that period.
+
+### Archive and Deprecation
+
+Deprecated artifacts should be preserved for reference but clearly marked as inactive.
+
+**Archive location**: `memory/archive/`
+
+**Structure**:
+```
+memory/archive/
+├── inbox/              # Completed inbox items (>14 days old)
+├── deprecated/         # Deprecated skills, patterns, or artifacts
+│   └── [artifact]/
+│       ├── README.md   # Explains deprecation
+│       └── [original files]
+└── [category]/         # Other archived content
+```
+
+**Deprecation README template**:
+```markdown
+# Deprecated: [Artifact Name]
+
+**Deprecated**: YYYY-MM-DD
+**Reason**: [Why this was deprecated]
+**Replaced by**: [New approach, or "Nothing - removed"]
+**Spec version**: [Version when deprecated, e.g., v1.7]
+
+## Original Purpose
+
+[What this artifact did]
+
+## Migration Notes
+
+[How to migrate to the new approach, if applicable]
+```
+
+**Deprecation workflow**:
+1. Mark as deprecated in CHANGELOG with spec version
+2. Move artifact to `memory/archive/deprecated/[artifact]/`
+3. Create deprecation README in that directory
+4. Update any references in active code/docs
+
+---
+
 ## Escalation Protocol
 
 ### Child-to-Parent Communication
@@ -770,6 +959,8 @@ When birthing a Tier 2 entity:
 | Lightweight | ~2k | 2.5k | 3.5k |
 | Full | ~13k | 15k | 20k |
 
+**Note for Orchestrators**: Orchestrators with coordination responsibilities (agent_coordination.md, routing rules, ecosystem awareness) may have higher lightweight boot targets (~3-4k tokens). This is acceptable due to the inherent complexity of coordination context. Full boot targets remain the same.
+
 ### Estimation
 
 - ~7.5 tokens per line (markdown average)
@@ -778,6 +969,103 @@ When birthing a Tier 2 entity:
 ### Tracked in
 
 `memory/system_health/token_budget.md`
+
+---
+
+## Context Graph (Optional)
+
+Entities MAY maintain a machine-readable graph representation for relationship visualization and querying. This section defines the standardized schema for entities that choose to implement graphs.
+
+### When to Implement
+
+Context graphs are recommended for:
+- **Orchestrators** - Complex relationship topology across ecosystem
+- **Meta-entities** - Specification maintenance with external references
+- **Exploratory phase** - When visualization would aid understanding
+
+Not recommended for:
+- Tier 1 minimal entities
+- Domain specialists with narrow scope
+- Ephemeral agents
+
+### Location
+
+If implemented: `memory/graph/`
+
+### Required Files (if implemented)
+
+| File | Purpose |
+|------|---------|
+| `schema.json` | Formal node/edge type definitions |
+| `entities.json` | All entity nodes with properties |
+| `relationships.json` | All edges between nodes |
+
+Optional files:
+- `skills.json` - Skill registry with ownership
+- `context_triggers.json` - Structured `surface_when` mappings
+- `README.md` - Human-readable schema documentation
+
+### Node Types
+
+| Type | Purpose | Examples |
+|------|---------|----------|
+| `entity` | Autonomous agents with identity | Jane, Engineer, Protocol |
+| `skill` | Reusable workflows | session-start, commit |
+| `memory` | Knowledge artifacts | Decision, Learning, Session |
+| `person` | Human profiles | Brandon, Hannah |
+| `project` | Active work items | CIQ implementation |
+
+### Edge Types
+
+| Type | Semantics | Direction |
+|------|-----------|-----------|
+| `parent_child` | Birth relationship | Jane → Engineer |
+| `peer` | Equal peer status | Jane ↔ Protocol |
+| `routes_to` | Request routing | Jane → Engineer |
+| `owns` | Ownership | Jane → session-start skill |
+| `surface_when` | Contextual trigger | Learning → "context engineering" |
+| `references` | Cross-reference | Decision → Learning |
+
+### Example Schema
+
+```json
+{
+  "schema": {
+    "nodeTypes": [
+      {"id": "entity", "label": "Autonomous Agent"},
+      {"id": "skill", "label": "Reusable Workflow"},
+      {"id": "memory", "label": "Knowledge Artifact"}
+    ],
+    "edgeTypes": [
+      {"id": "parent_child", "label": "Birth Relationship"},
+      {"id": "peer", "label": "Peer Relationship"},
+      {"id": "owns", "label": "Ownership"}
+    ]
+  },
+  "nodes": [
+    {"id": "jane", "type": "entity", "role": "orchestrator"},
+    {"id": "engineer", "type": "entity", "role": "domain_specialist"},
+    {"id": "session-start", "type": "skill", "owner": "jane"}
+  ],
+  "edges": [
+    {"type": "parent_child", "from": "jane", "to": "engineer", "created": "2025-12-30"},
+    {"type": "peer", "from": "jane", "to": "protocol", "created": "2026-01-04"},
+    {"type": "owns", "from": "jane", "to": "session-start"}
+  ]
+}
+```
+
+### Implementation Guidance
+
+Entities implementing graphs should:
+1. Keep graph files current with operational changes
+2. Use automated generation where possible (e.g., `/generate-graph` skill)
+3. Maintain backwards compatibility with relationship definitions
+4. Document any custom edge types beyond the standard set
+
+### Backwards Compatibility
+
+This section is purely additive. Entities not implementing graphs are unaffected and remain fully compliant.
 
 ---
 
@@ -920,6 +1208,9 @@ See `birth_protocol/agent_birth_protocol.md` for:
 | 1.4 | January 4, 2026 | Protocol standardization: confirmed `memory/sessions/exports/` path, `current_objectives.md` naming, flat inbox for all types including skill proposals and handoffs |
 | 1.5 | January 4, 2026 | Added Meta-Entity role (Tier 2 variant), defined `_summary.md` format and template, fixed path references to `birth_protocol/` |
 | 1.6 | January 4, 2026 | Gap completion: skill structure, escalation SLAs, inbox lifecycle, conditional context, data directory, diagnostic examples, 6 new templates, memory transfer review in birth |
+| 1.7 | January 5, 2026 | Added Context Graph schema (optional), added expert-review skill pattern (replaces deprecated execution lenses), enhanced entity-diagnostic with --entity and --ecosystem modes |
+| 1.7.1 | January 8, 2026 | Orchestrator token budget clarification, project/meeting patterns, T2-29 session-export path validation |
+| 1.8 | January 12, 2026 | Added Memory Maintenance section: weekly reviews (RECOMMENDED), index maintenance guidance, deprecation protocol, portability validation guidance |
 
 ---
 

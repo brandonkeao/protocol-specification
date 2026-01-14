@@ -10,6 +10,65 @@ Track the evolution of ENTITY_SPEC.md over time.
 
 ---
 
+## [1.8] - 2026-01-12
+
+### Added
+- Memory Maintenance section documenting:
+  - Weekly reviews (RECOMMENDED) with template and cadence guidance
+  - Index maintenance with freshness guidelines (Fresh <7 days, Stale >14 days)
+  - Deprecation protocol with archive structure and README template
+- Portability validation guidance in Skill Portability section
+- T2-30 validation check: Memory index freshness (>7 days = WARN)
+
+### Notes
+- Based on ecosystem friction analysis
+- Validation checklist updated to v1.3 (38 items, was 37)
+- All additions are backwards-compatible (MINOR version)
+
+---
+
+## [1.7.1] - 2026-01-08
+
+### Added
+- Orchestrator token budget clarification: Higher lightweight boot targets (~3-4k tokens) acceptable for orchestrators due to coordination context
+- Project documentation pattern (optional): `data/projects/` structure example
+- Meeting records pattern (optional): `data/meetings/` structure example
+- Session export path validation check (T2-29) in validation_checklist.md
+
+### Fixed
+- Example entity: Corrected session-export path references across skill files
+
+### Notes
+- Based on ecosystem audit findings
+- Validation checklist updated to v1.2 (37 items, was 36)
+
+---
+
+## [1.7] - 2026-01-05
+
+### Added
+- Context Graph schema (optional) - Machine-readable relationship representation
+  - Node types: entity, skill, memory, person, project
+  - Edge types: parent_child, peer, routes_to, owns, surface_when, references
+  - Located in `memory/graph/` if implemented
+- Expert review skill pattern - Configurable expert perspectives via `--lens` parameter
+  - Replaces deprecated "execution lens" approach
+  - `/expert-review --lens=security|architecture|product`
+- Enhanced `entity-diagnostic` skill:
+  - `--entity [path]` parameter for validating any entity
+  - `--ecosystem` mode for cross-entity validation
+  - `--json` output for machine-readable results
+
+### Deprecated
+- Execution lenses (`.claude/agents/` lens files) - Use `expert-review` skill instead
+  - Migration: Create `/expert-review` skill with `--lens` parameter
+
+### Notes
+- All additions are backwards-compatible (MINOR version)
+- Context Graph is explicitly OPTIONAL - entities without graphs remain compliant
+
+---
+
 ## [1.6] - 2026-01-04
 
 ### Added
