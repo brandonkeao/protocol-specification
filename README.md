@@ -340,7 +340,10 @@ protocol-specification/
 │   └── checklist.md        # 66-item validation
 │
 └── examples/
-    └── sample-entity/      # Working minimal example
+    ├── sample-entity/      # Tier 1 minimal example
+    ├── jane-lite/          # Tier 2 teaching reference
+    ├── engineer-example/   # Domain specialist example
+    └── jane-starter/       # Ready-to-use Tier 2 orchestrator
 ```
 
 ---
@@ -357,7 +360,7 @@ protocol-specification/
 
 ## Version
 
-Current specification version: **1.6**
+Current specification version: **1.8**
 
 See [`CHANGELOG.md`](./CHANGELOG.md) for version history.
 
@@ -408,7 +411,8 @@ This specification is open to contributions:
 
 ## Getting Help
 
+- **New?** Start with [`jane-starter`](./examples/jane-starter/) - a ready-to-use orchestrator
 - Read the [full specification](./ENTITY_SPEC.md)
 - Check the [architecture guide](./specification/architecture.md)
-- Review the [sample entity](./examples/sample-entity/)
+- Review the [sample entity](./examples/sample-entity/) for minimal setup
 - Validate with the [checklist](./validation/checklist.md)

@@ -30,7 +30,32 @@ Follow the prompts:
 
 ---
 
-## Option 2: Manual Setup (Tier 1 Minimal)
+## Option 2: Use jane-starter (Full Experience)
+
+Want to experience a complete Tier 2 orchestrator immediately?
+
+```bash
+# Copy jane-starter to your workspace
+cp -r examples/jane-starter ~/my-workspace/orchestrator
+cd ~/my-workspace/orchestrator
+
+# Boot it up
+claude
+```
+
+Then run `/session-start` - you're now running a full orchestrator!
+
+**What you get**:
+- 5 kernel files defining identity
+- 4 core skills (session-start, session-export, handoff, commit)
+- Pre-configured memory structure
+- Templates for everything
+
+See `examples/jane-starter/README.md` for customization and next steps.
+
+---
+
+## Option 3: Manual Setup (Tier 1 Minimal)
 
 ### Step 1: Create Structure
 
