@@ -1,8 +1,8 @@
 # Entity Specification Protocol
 
-**Version**: 1.8
+**Version**: 2.1
 **Created**: January 2026
-**Updated**: January 12, 2026
+**Updated**: January 20, 2026
 **Purpose**: Canonical specification for Jane-like entities
 
 ---
@@ -143,6 +143,94 @@ entity/
 - Full boot sequence with context loading
 
 **Examples:** Jane (orchestrator), Personal Branding, Engineer
+
+---
+
+## Context Maps (Optional Pattern)
+
+Context Maps are structured collections of domain-specific context that can be loaded on-demand. Unlike entities, context maps don't have independent identity or memory—they're loadable knowledge modules.
+
+### What is a Context Map?
+
+A Context Map is:
+- A directory structure containing related context files
+- Loadable via a dedicated skill (e.g., `/load-team-context`)
+- Domain-organized (leadership, team, project, domain)
+- An optional enhancement to any entity
+
+A Context Map is NOT:
+- An independent entity (no CLAUDE.md)
+- A memory system (no inbox, no session continuity)
+- A replacement for entities
+
+### When to Use Context Maps
+
+| Use Case | Example |
+|----------|---------|
+| User-specific knowledge | Brandon's leadership context, team relationships |
+| Domain reference | Industry terminology, competitive landscape |
+| Project context | Stakeholder map, decision history |
+| Conditional loading | Load only when relevant domain work begins |
+
+### Context Map Structure
+
+```
+context_map/
+├── [Domain-Name]/
+│   ├── _overview.md          # Map overview and index
+│   ├── topic-1.md            # Individual context files
+│   ├── topic-2.md
+│   └── nested/
+│       └── subtopic.md
+```
+
+### Loading Pattern
+
+Context maps should be loaded via dedicated skills:
+
+```
+/load-[domain]-context
+```
+
+**Examples:**
+- `/load-leadership-context` - Private leadership context
+- `/load-team-context` - Public team context
+- `/load-project-context` - Project-specific context
+
+### Skill Template for Context Loading
+
+```markdown
+# Load [Domain] Context
+
+Loads the [domain] context map for contextual awareness.
+
+## Trigger
+- `/load-[domain]-context`
+- When [domain] work begins
+- User explicitly requests
+
+## Process
+1. Read context_map/[Domain]/_overview.md
+2. Based on current task, load relevant files
+3. Summarize loaded context for user
+4. Proceed with context-aware work
+
+## Token Considerations
+- Load _overview.md first (index)
+- Load specific files as needed
+- Avoid loading entire map at once
+```
+
+### Relationship to Entities
+
+| Aspect | Entity | Context Map |
+|--------|--------|-------------|
+| Identity | Has CLAUDE.md, boot sequence | No independent identity |
+| Memory | Has inbox, session continuity | No memory system |
+| Loading | Boots automatically | Loaded on demand via skill |
+| Purpose | Autonomous agent | Knowledge module |
+
+Context maps complement entities—they don't replace them. An entity might have multiple context maps it can load depending on the work.
 
 ---
 
@@ -395,6 +483,28 @@ data/
 
 **Rule**: Don't duplicate shared data. Reference `shared_memory/` instead.
 
+#### Jane's Knowledge Graph
+
+The workspace has a Knowledge Graph maintained by Jane (orchestrator) at:
+`/Users/brandonkeao/rebrandly/jane/data/knowledge-graph/`
+
+| Access Level | Who | How |
+|--------------|-----|-----|
+| Full read/write | Jane | Direct |
+| Read (permission required) | Other entities | Request via Jane's inbox |
+| Write | Jane only | Others request updates via inbox |
+
+**To request Knowledge Graph access**:
+1. Send message to Jane's inbox with: what you need, why, expected query pattern
+2. Wait for acknowledgment
+3. Query using grep/jq patterns documented in `schema.md`
+
+**Contents**: People, Customers, Initiatives, Resources, Ownership edges
+
+**Schema reference**: `jane/data/knowledge-graph/schema.md`
+
+This will evolve to workspace-level (`shared_memory/`) when patterns stabilize.
+
 #### Retention
 
 | Content Type | Retention | Archive Process |
@@ -430,6 +540,34 @@ Meeting records should link to `memory/evolution/decisions/` when decisions are 
 ---
 
 ## Core Skills
+
+### Skill Classification
+
+Skills are categorized by ownership and portability:
+
+| Type | Definition | Ownership | Portability |
+|------|------------|-----------|-------------|
+| **Core Skills** | Required for all Tier 2 entities | Spec-owned | Must not modify behavior |
+| **Domain Skills** | Entity-specific workflows | Entity-owned | Entity-specific |
+| **Custom Skills** | User-requested additions | User-owned | Per-entity |
+
+**Core Skills** (defined below): `session-start`, `session-export`, `handoff`, `entity-diagnostic`
+- All Tier 2 entities must have these
+- Behavior should match spec; only paths change
+
+**Domain Skills** (entity-specific):
+- Created for entity's domain responsibilities
+- Examples: `/sync-ost` (EPD), `/load-leadership-context` (Jane)
+- Documented in entity's skill index
+
+**Custom Skills** (user additions):
+- Added by user request
+- May be unique to one entity
+- Should be documented in entity's `.claude/skills/_index.md`
+
+---
+
+### Required Core Skills
 
 Full entities must have these skills in `.claude/skills/`:
 
@@ -862,6 +1000,171 @@ memory/archive/
 
 ---
 
+## Plan Persistence (Optional, Recommended for Tier 2)
+
+Entities with multi-session work or complex projects SHOULD implement plan persistence to maintain implementation strategies across sessions.
+
+### When to Implement
+
+Plan persistence is recommended for:
+- **Tier 2 Full Entities** - Multi-session work requiring continuity
+- **Complex projects** - Implementation spanning multiple phases
+- **Objective-linked work** - Plans tied to `current_objectives.md`
+
+Not needed for:
+- Tier 1 minimal entities
+- Single-session tasks
+- Ephemeral work without follow-up
+
+### Directory Structure
+
+If implemented: `active_work/plans/`
+
+```
+active_work/plans/
+├── _index.md        # Registry/dashboard of all plans
+├── _template.md     # Standard plan file template
+├── YYYY-MM-DD_[slug].md  # Individual plan files
+└── archive/         # Completed plans (>30 days)
+```
+
+**Location rationale**: Plans are operational artifacts about current work, not historical memory. They sit alongside `projects/` and `current_objectives.md`.
+
+### Plan File Format
+
+**Frontmatter (YAML)**:
+```yaml
+---
+type: plan
+status: draft | active | paused | completed | archived | abandoned
+priority: high | medium | low
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+completed: YYYY-MM-DD
+objective: "Objective 1: Full Context Refresh"
+project: project-slug
+source_plan: ~/.claude/plans/original-plan.md
+sessions: [session-export-slugs]
+tags: [infrastructure, slack]
+---
+```
+
+**Required fields**: type, status, priority, created, updated
+**Recommended fields**: objective, project, sessions, tags
+
+**Content sections**:
+- Summary
+- Objective Alignment
+- Current Status
+- Implementation Phases
+- Dependencies
+- Blockers
+- Key Files
+- Decision Log
+- Change History
+
+### Plan Lifecycle
+
+```
+draft → active → completed
+          ↓
+        paused → active (resume)
+          ↓
+       abandoned
+```
+
+| Status | Meaning | Human Auth Required |
+|--------|---------|---------------------|
+| **draft** | Plan being developed | No |
+| **active** | In execution | Yes (draft→active) |
+| **paused** | On hold, blocked | Yes (active→paused) |
+| **completed** | Successfully finished | Yes (active→completed) |
+| **abandoned** | Will not complete | Yes |
+| **archived** | Moved to archive (>30 days) | No |
+
+### Human-in-the-Loop Requirement
+
+**Critical**: Status changes require human operator authorization.
+
+| Action | Entity Can Do? | Human Required? |
+|--------|----------------|-----------------|
+| Create plan (draft) | Yes | No |
+| Propose status change | Yes | - |
+| Execute status change | No | Yes |
+| Update plan content | Yes | No |
+| Archive completed plan | Yes (>30 days) | No |
+
+**Process**:
+1. Entity proposes status change with rationale
+2. Human reviews and authorizes
+3. Entity updates status only after authorization
+4. Change logged in plan's Change History
+
+### Registry (`_index.md`)
+
+The registry provides a dashboard view (~300-500 tokens):
+- Active plans with status, priority, objective, last updated
+- Plans grouped by status
+- Plans grouped by objective
+- Recently completed (30 days)
+- Stale plan warnings (>14 days no update)
+
+### Integration Points
+
+**Boot sequence** (if implementing session-start):
+- Surface active/paused plans (~100-200 tokens)
+- Flag stale plans (>14 days)
+
+**Session exports** (if implementing session-export):
+- Add "Plans Worked On" section
+- Update plan's `sessions` list
+
+**Entity diagnostic** (if implementing entity-diagnostic):
+- Add plan health checks
+- Check for staleness, orphans, blockers
+
+**Objectives** (in `current_objectives.md`):
+- Add `**Plans**:` section under each objective
+- Link to relevant plan files
+
+### Retention Guidelines
+
+| Plan Status | Retention | Action |
+|-------------|-----------|--------|
+| draft | Until activated or abandoned | Review periodically |
+| active | Until completed | Update with progress |
+| paused | Until resumed or abandoned | Flag if >30 days |
+| completed | 30 days in plans/, then archive | Move to `archive/` |
+| abandoned | 14 days | Delete or archive |
+
+### Staleness Thresholds
+
+| Age Since Last Update | Status | Action |
+|-----------------------|--------|--------|
+| < 7 days | Fresh | None |
+| 7-14 days | Aging | Review in next session |
+| > 14 days | Stale | WARN in diagnostic, review immediately |
+
+### Skill: `/persist-plan`
+
+Entities SHOULD implement a `persist-plan` skill that:
+1. Captures ephemeral plans (from `~/.claude/plans/`)
+2. Extracts metadata and infers objective alignment
+3. Generates plan file in `active_work/plans/`
+4. Updates registry `_index.md`
+5. Reports confirmation
+
+**Arguments** (recommended):
+- `--source [path]` - Path to ephemeral plan
+- `--objective [text]` - Link to objective
+- `--project [slug]` - Link to project file
+
+### Backwards Compatibility
+
+This section is purely additive. Entities not implementing plan persistence are unaffected and remain fully compliant. Plan persistence is a recommended capability for Tier 2 entities with multi-session work.
+
+---
+
 ## Escalation Protocol
 
 ### Child-to-Parent Communication
@@ -1211,6 +1514,8 @@ See `birth_protocol/agent_birth_protocol.md` for:
 | 1.7 | January 5, 2026 | Added Context Graph schema (optional), added expert-review skill pattern (replaces deprecated execution lenses), enhanced entity-diagnostic with --entity and --ecosystem modes |
 | 1.7.1 | January 8, 2026 | Orchestrator token budget clarification, project/meeting patterns, T2-29 session-export path validation |
 | 1.8 | January 12, 2026 | Added Memory Maintenance section: weekly reviews (RECOMMENDED), index maintenance guidance, deprecation protocol, portability validation guidance |
+| 2.0 | January 20, 2026 | Added Plan Persistence section: persistent plans for multi-session work, plan lifecycle with human-in-loop, registry pattern, /persist-plan skill specification |
+| 2.1 | January 20, 2026 | Added Context Maps pattern (optional), Skill Classification (core/domain/custom), enhanced documentation for emerging patterns |
 
 ---
 

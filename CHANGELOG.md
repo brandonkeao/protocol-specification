@@ -10,6 +10,42 @@ Track the evolution of ENTITY_SPEC.md over time.
 
 ---
 
+## [2.1] - 2026-01-20
+
+### Added
+- **Context Maps** (new section): Optional pattern for loadable knowledge modules
+  - Structured context collections that complement entities
+  - Loading via dedicated skills (`/load-[domain]-context`)
+  - Skill template for context loading
+  - Relationship matrix (Entity vs Context Map)
+- **Skill Classification** framework in Core Skills section:
+  - Core Skills: Required for all Tier 2, spec-owned
+  - Domain Skills: Entity-specific workflows, entity-owned
+  - Custom Skills: User-requested additions, user-owned
+
+### Notes
+- All additions backwards-compatible (MINOR version)
+- Context Maps pattern already validated in production (leadership/team context maps)
+- Skill classification reflects emerging patterns across workspaces
+
+---
+
+## [2.0] - 2026-01-20
+
+### Added
+- **Plan Persistence** section for multi-session work tracking:
+  - Plan lifecycle: draft → active → paused → completed
+  - Human-in-the-loop approval for status changes
+  - Registry pattern for tracking plans
+  - `/persist-plan` skill specification
+
+### Notes
+- Major version bump due to significant new capability
+- Backwards-compatible - plans are optional
+- Validation checklist updated
+
+---
+
 ## [1.8] - 2026-01-12
 
 ### Added
