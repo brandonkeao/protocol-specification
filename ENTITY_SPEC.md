@@ -1,6 +1,6 @@
 # Entity Specification Protocol
 
-**Version**: 2.2
+**Version**: 2.3
 **Created**: January 2026
 **Updated**: January 21, 2026
 **Purpose**: Canonical specification for Jane-like entities
@@ -231,6 +231,57 @@ Loads the [domain] context map for contextual awareness.
 | Purpose | Autonomous agent | Knowledge module |
 
 Context maps complement entities—they don't replace them. An entity might have multiple context maps it can load depending on the work.
+
+### Context Map Distribution
+
+Context maps can be distributed via Git repositories, making knowledge portable and shareable:
+
+| Stage | Location | Purpose |
+|-------|----------|---------|
+| **Staging** | GitLab/GitHub repo | Canonical source, team-shareable |
+| **Local Clone** | `context_repos/[repo-name]/` | Entity-accessible copy |
+| **Integration** | Entity skill | `/load-[domain]-context` |
+
+**Pull flow** (consuming shared context):
+1. Clone repo to `context_repos/[repo-name]/`
+2. Register in `context_repos/_registry.md`
+3. Create loading skill in entity
+4. Entity can now load context on demand
+
+**Push flow** (sharing local context):
+1. Edit working copy locally (e.g., `entity/context_map/YourName-Context/`)
+2. Sync to repo copy: `sync-[name]-context.sh`
+3. Commit and push to Git remote
+4. Others can now pull your context
+
+**Registry pattern**:
+
+Maintain a `context_repos/_registry.md` that tracks:
+- Registered repositories (name, source URL, local path)
+- Team members tracked per repo
+- Sync status and last update
+- Primary aggregator entity
+
+**Example architecture**:
+```
+workspace/
+├── context_repos/
+│   ├── _registry.md           # Track all repos
+│   ├── epd_context/           # Cloned from GitLab
+│   │   ├── Brandon-Keao-Context/
+│   │   └── Eduard-Capanu-Context/
+│   └── sync-brandon-context.sh
+├── jane/
+│   └── context_map/
+│       └── Brandon-Team-Context/  # Working copy
+└── protocol/
+```
+
+This architecture enables:
+- **Portable knowledge** - Clone context to any machine
+- **Team collaboration** - Share context via Git workflows
+- **AI-ready structure** - Format that entities understand
+- **Version control** - Track changes, collaborate via PRs
 
 ---
 

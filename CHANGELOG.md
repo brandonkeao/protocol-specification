@@ -10,6 +10,41 @@ Track the evolution of ENTITY_SPEC.md over time.
 
 ---
 
+## [2.3] - 2026-01-22
+
+### Added
+- **Context Map Distribution** subsection in Context Maps:
+  - Pull flow for consuming shared context from Git repositories
+  - Push flow for sharing local context to remotes
+  - Registry pattern (`context_repos/_registry.md`) for tracking repos
+  - Example architecture diagram showing workspace layout
+  - Enables portable, shareable knowledge across agentic systems
+
+### Notes
+- Backwards-compatible (MINOR version)
+- Documents existing pattern validated in Rebrandly workspace (epd_context repo)
+
+---
+
+## [2.2] - 2026-01-21
+
+### Added
+- **Onboarding** section for Tier 2 orchestrators:
+  - First-boot detection using state file (`memory/system_health/onboarding.md`)
+  - Progressive disclosure flow (6 steps)
+  - Skip/reset escape hatches
+  - Integration with session-start skill
+- **Fresh Start Testing** section:
+  - Automated validation via `fresh_start_validator.sh`
+  - Testing scenarios for new entities, first-boot, continuity
+  - Integration with protocol reviews
+
+### Notes
+- Backwards-compatible (MINOR version)
+- Onboarding pattern validated with Jane (Work) orchestrator
+
+---
+
 ## [2.1] - 2026-01-20
 
 ### Added
