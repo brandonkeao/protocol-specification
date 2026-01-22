@@ -26,6 +26,44 @@ A Jane-like entity is an AI agent with persistent identity, memory, and structur
 
 ---
 
+## Version Compatibility
+
+### Compatibility Matrix
+
+| From | To | Breaking? | Migration Required |
+|------|-----|-----------|-------------------|
+| 1.8 | 2.0 | No | Optional plan structure |
+| 2.0 | 2.1 | No | None |
+| 2.1 | 2.2 | No | Add onboarding state file (Tier 2) |
+| 2.2 | 2.3 | No | None |
+| 2.3 | 2.4 | No | None |
+
+### Migration Guide
+
+#### Upgrading 1.8 → 2.4
+
+1. **Add plan structure** (optional):
+   ```bash
+   mkdir -p active_work/plans
+   ```
+
+2. **Add onboarding state** (Tier 2 only):
+   ```bash
+   mkdir -p memory/system_health
+   echo "Status: Complete" > memory/system_health/onboarding.md
+   ```
+
+3. **Update CLAUDE.md** boot sequence to reference new skills
+
+#### Deprecation Policy
+
+- Features deprecated with 2 minor version warning
+- Deprecated features removed after 1 major version
+- Breaking changes only in major versions
+- Deprecation notices appear in CHANGELOG.md
+
+---
+
 ## Three-Layer Architecture
 
 ```
@@ -282,6 +320,33 @@ This architecture enables:
 - **Team collaboration** - Share context via Git workflows
 - **AI-ready structure** - Format that entities understand
 - **Version control** - Track changes, collaborate via PRs
+
+### Context Map Lifecycle
+
+#### When to Create
+- Domain knowledge exceeds 5 files
+- Multiple entities need same context
+- Knowledge should persist beyond sessions
+- Team members need to share structured knowledge
+
+#### Maintenance
+- Review monthly for staleness
+- Update registry after any structural change
+- Archive unused maps after 90 days inactivity
+- Keep `_overview.md` current as index
+
+#### Deprecation
+1. Mark as deprecated in context map's CLAUDE.md
+2. Notify dependent entities via inbox
+3. Maintain read access for 30 days
+4. Archive to `context_map/_archived/`
+5. Update registry to reflect archived status
+
+#### Conflict Resolution
+- **Single-editor maps**: Last-write-wins
+- **Shared maps**: PR-based review required
+- **Disputes**: Human arbitration
+- **Sync conflicts**: Prefer canonical (Git) version
 
 ---
 
@@ -939,6 +1004,90 @@ During protocol reviews, include:
 
 ---
 
+## Error Handling & Recovery
+
+Entities should handle failures gracefully and recover when possible.
+
+### Error Categories
+
+| Category | Examples | Severity | Action |
+|----------|----------|----------|--------|
+| **Structural** | Missing CLAUDE.md, malformed YAML | CRITICAL | Refuse to boot |
+| **Runtime** | Failed skill execution, missing context file | HIGH | Report and offer retry |
+| **Coordination** | Invalid inbox item, circular handoff | MEDIUM | Log and continue |
+| **Data** | Corrupted session export, stale index | LOW | Warn and proceed |
+
+### Recovery Procedures
+
+#### Missing Context Files
+1. Log warning with file path
+2. Continue boot with available context
+3. Report missing files in boot summary
+4. Do NOT fail boot for optional context (only kernel is critical)
+
+#### Malformed Inbox Items
+1. Move to `memory/inbox/_invalid/`
+2. Log error with item details and reason
+3. Continue processing other items
+4. Report in session summary
+
+#### Failed Skill Execution
+1. Capture error state and context
+2. Report to user immediately
+3. Offer retry or skip options
+4. Log to `memory/evolution/errors/YYYY-MM-DD_error.md`
+
+#### Circular Dependencies
+1. Track coordination chain in memory
+2. Detect cycle at 3rd occurrence of same entity
+3. Break cycle and notify all parties
+4. Escalate to human if unresolved after notification
+
+### Graceful Degradation
+
+Entities should degrade gracefully based on what's available:
+
+| Missing | Behavior |
+|---------|----------|
+| Kernel context | **Refuse to boot** (CRITICAL) |
+| Conditional context | Boot with warning |
+| Session exports | Boot fresh, note missing history |
+| Inbox directory | Boot without coordination capability |
+| Skills directory | Boot with core functionality only |
+
+### Human Escalation Triggers
+
+Automatically escalate to human when:
+- Boot fails 3 consecutive times
+- Inbox item unresolved for 7+ days
+- Circular dependency detected
+- Data corruption suspected
+- Skill fails repeatedly (3+ times same skill)
+
+### Error Logging Format
+
+```markdown
+# Error: [Brief Description]
+
+**Timestamp**: YYYY-MM-DD HH:MM
+**Category**: structural | runtime | coordination | data
+**Severity**: critical | high | medium | low
+
+## Context
+[What was happening when error occurred]
+
+## Error Details
+[Technical details, stack trace if available]
+
+## Recovery Attempted
+[What recovery steps were tried]
+
+## Resolution
+[How it was resolved, or "Escalated to human"]
+```
+
+---
+
 ## Inbox Protocol
 
 ### Structure
@@ -1040,6 +1189,38 @@ pending → acknowledged → completed
 | dismissed | 7 days | Delete |
 
 **Stale item warning**: Items pending > 14 days should trigger WARN in entity-diagnostic.
+
+### Coordination Edge Cases
+
+#### Entity Deletion Mid-Coordination
+- Pending items return to sender with `status: returned`
+- Include reason: "target entity no longer exists"
+- Sender entity should surface returned items to human
+
+#### Circular Handoffs
+- Track handoff chain in item metadata (`handoff_chain: [entity1, entity2, ...]`)
+- Detect cycle at 3rd occurrence of same entity
+- Break cycle, mark item as `status: circular_detected`
+- Notify all parties in chain
+- Escalate to human for resolution
+
+#### Inbox Overload (>20 pending items)
+- Process by priority: `high` → `medium` → `low`
+- Within same priority, process oldest first (FIFO)
+- Warn user if backlog exceeds 20 items
+- Suggest bulk review session
+
+#### Stale Items (>30 days pending)
+- Auto-tag with `stale: true` in frontmatter
+- Include prominently in boot summary
+- Suggest dismissal or immediate action
+- Consider escalation if critical priority
+
+#### Conflicting Instructions
+- If two items contain contradictory instructions:
+  1. Surface both to human with conflict highlighted
+  2. Do not act on either until human resolves
+  3. Log conflict in error log
 
 ---
 
@@ -1196,6 +1377,29 @@ Not needed for:
 - Tier 1 minimal entities
 - Single-session tasks
 - Ephemeral work without follow-up
+
+### Plans vs. Session Exports: When to Use Each
+
+| Use Session Exports When | Use Plans When |
+|--------------------------|----------------|
+| Work completed in single session | Work spans multiple sessions |
+| No multi-step coordination needed | Multiple phases with dependencies |
+| Primarily capturing learnings/decisions | Need to track progress over time |
+| Simple follow-up via "Open Threads" | Coordinating with other entities |
+
+**Decision Tree**:
+```
+Is this multi-session work?
+├─ No → Session Export
+└─ Yes → Does it have distinct phases?
+         ├─ No → Session Export with "Open Threads"
+         └─ Yes → Create Plan
+```
+
+**Retrofitting Plans** (for entities without plan support):
+1. Create structure: `mkdir -p active_work/plans`
+2. Create registry: `touch active_work/plans/_index.md`
+3. Move existing project tracking to plans format
 
 ### Directory Structure
 

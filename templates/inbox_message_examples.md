@@ -2,7 +2,7 @@
 
 **Purpose**: Concrete YAML frontmatter examples for cross-entity communication
 **Reference**: See `ENTITY_SPEC.md` Section "Inbox Protocol" for full specification
-**Spec Version**: 1.8
+**Spec Version**: 2.4
 
 ---
 
@@ -40,6 +40,7 @@ created: 2026-01-03
 acknowledged:
 completed:
 surface_when: session start
+handoff_chain: []  # Tracks entity path for circular detection
 ---
 
 # CIQ Cloud Function Deployment
@@ -124,6 +125,58 @@ Revisit the family coordination context flow architecture to validate it's worki
 
 ---
 
+### Type: notification
+
+System or entity notification (no action required, informational only).
+
+```yaml
+---
+type: notification
+from: Protocol
+to: Jane
+status: pending
+priority: high
+created: 2026-01-22
+surface_when: session start
+---
+
+# Breaking Change Notice: ENTITY_SPEC.md v3.0
+
+## Summary
+
+ENTITY_SPEC.md v3.0 introduces breaking changes that require entity updates.
+
+## What's Changing
+
+1. **Memory structure** - New required directory: `memory/system_health/`
+2. **Skill format** - SKILL.md now requires `version` field
+3. **Boot sequence** - Must run `/session-start` before any other skill
+
+## Required Actions
+
+1. Run migration script: `./scripts/migrate_v3.sh`
+2. Validate with: `./scripts/fresh_start_validator.sh --tier2`
+3. Update CLAUDE.md boot sequence
+
+## Timeline
+
+- **Now**: v3.0 released
+- **+30 days**: v2.x deprecated
+- **+60 days**: v2.x no longer supported
+
+## Resources
+
+- Migration guide: `MIGRATION.md`
+- Changelog: `CHANGELOG.md`
+```
+
+**Status lifecycle**:
+- `pending` → Not yet read
+- `acknowledged` → Read and understood
+- `dismissed` → No longer relevant
+
+---
+
 ### Type: skill_proposal
 
 Request for new skill or capability.
@@ -204,6 +257,8 @@ Should I build this, or is it over-engineering for current needs?
 | `acknowledged` | date | When status changed to acknowledged |
 | `completed` | date | When status changed to completed |
 | `surface_when` | string | Context triggers for surfacing during boot |
+| `handoff_chain` | array | Entity path for circular handoff detection |
+| `references` | string | Related item ID (for follow-ups) |
 
 ### Valid `surface_when` Values
 
@@ -293,3 +348,63 @@ First sync ran and captured 21 new events.
 **When to use informal vs. formal**:
 - **Informal** (`messages_to_jane/`): Quick updates, questions, non-blocking
 - **Formal** (`inbox/`): Work transitions, blocking issues, formal deliverables
+
+---
+
+## Circular Handoff Detection
+
+The `handoff_chain` field tracks entity path to detect circular handoffs:
+
+```yaml
+---
+type: handoff
+from: Protocol
+to: Jane
+handoff_chain: ["Engineer", "Protocol"]  # Shows: Engineer → Protocol → Jane
+---
+```
+
+**Detection rules**:
+- If current entity appears in `handoff_chain`, circular handoff detected
+- Break cycle at 3rd occurrence
+- Notify all parties in chain
+- Escalate to human if unresolved
+
+**Example of circular detection**:
+```
+1. Engineer → Jane (chain: [])
+2. Jane → Protocol (chain: ["Engineer"])
+3. Protocol → Engineer (chain: ["Engineer", "Jane"])
+   ⚠️ CIRCULAR: Engineer already in chain!
+```
+
+---
+
+## Returned Items
+
+When target entity no longer exists or rejects:
+
+```yaml
+---
+type: handoff
+from: Jane
+to: Engineer
+status: returned
+priority: medium
+created: 2026-01-20
+returned: 2026-01-22
+return_reason: target entity no longer exists
+---
+
+# Deployment Task (RETURNED)
+
+## Original Request
+[Original content here]
+
+## Return Information
+**Returned**: 2026-01-22
+**Reason**: Target entity "Engineer" no longer exists in workspace
+
+## Recommended Action
+Reassign to another entity or handle directly.
+```

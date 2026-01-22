@@ -10,6 +10,50 @@ Track the evolution of ENTITY_SPEC.md over time.
 
 ---
 
+## [2.4] - 2026-01-22
+
+### Added
+- **Error Handling & Recovery** section:
+  - Error categories (Structural, Runtime, Coordination, Data)
+  - Recovery procedures for common failure modes
+  - Graceful degradation guidelines
+  - Human escalation triggers
+- **Version Compatibility** section:
+  - Compatibility matrix for all versions
+  - Migration guide links
+  - Deprecation policy
+- **Coordination Edge Cases** in Inbox Protocol:
+  - Entity deletion mid-coordination
+  - Circular handoff detection with `handoff_chain`
+  - Inbox overload handling (>20 pending)
+  - Stale item management (>30 days)
+- **Context Map Lifecycle** in Context Maps:
+  - When to create context maps
+  - Maintenance guidelines
+  - Deprecation and conflict resolution
+- **Plan vs. Session Export guidance** in Plan Persistence:
+  - Decision tree for choosing between plans and exports
+  - Retrofitting plans to existing entities
+
+### New Files
+- `SKILL_AUTHORING.md` - Complete guide for skill development
+- `MIGRATION.md` - Tier 1 → Tier 2 and version migration guide
+- `scripts/fresh_start_validator.sh` - Entity validation script
+- `templates/plan_template.md` - Plan file template
+- `templates/skills/context-diagnostic/SKILL.md` - Context loading diagnostic
+- `templates/skills/list-skills/SKILL.md` - Skill discovery
+- `templates/skills/entity-diagnostic/SKILL.md` - Enhanced with `--memory` flag
+
+### Updated
+- `templates/inbox_message_examples.md` - Added notification type, handoff_chain, circular detection
+
+### Notes
+- Backwards-compatible (MINOR version)
+- Comprehensive stability and UX improvements for new users
+- All validation checks updated to v2.4
+
+---
+
 ## [2.3] - 2026-01-22
 
 ### Added
