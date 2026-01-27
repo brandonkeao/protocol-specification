@@ -10,6 +10,40 @@ Track the evolution of ENTITY_SPEC.md over time.
 
 ---
 
+## [2.6] - 2026-01-26
+
+### Added
+- **Recommended Infrastructure** section:
+  - Cortex session memory as optional but recommended tooling
+  - Explains relationship between Cortex (automatic capture) and entity memory (curated)
+  - Configuration presets (full, essential, minimal)
+  - Verification checklist
+
+### New Files
+- `birth_protocol/agent_birth_protocol.md` - Complete entity birth process with infrastructure verification
+
+### Notes
+- Cortex is user-level (applies to all entity workspaces automatically)
+- `projectScope: true` keeps memories separated per entity
+- Complements, doesn't replace, the existing entity memory system
+
+---
+
+## [2.5] - 2026-01-25
+
+### Added
+- **Claude Product Compatibility** requirements:
+  - Self-contained identity in CLAUDE.md lines 1-30
+  - Graceful degradation across Claude products (Code, Cowork, API)
+  - Portability testing requirements
+  - Product-specific CLAUDE.md sections
+
+### Notes
+- Critical for Claude Cowork compatibility (no hooks/skills, only CLAUDE.md loaded)
+- entity-diagnostic should WARN if lines 1-30 don't contain identity keywords
+
+---
+
 ## [2.4] - 2026-01-22
 
 ### Added

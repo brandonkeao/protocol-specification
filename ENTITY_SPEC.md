@@ -1,8 +1,8 @@
 # Entity Specification Protocol
 
-**Version**: 2.3
+**Version**: 2.6
 **Created**: January 2026
-**Updated**: January 21, 2026
+**Updated**: January 26, 2026
 **Purpose**: Canonical specification for Jane-like entities
 
 ---
@@ -423,6 +423,61 @@ System instructions loaded every session. Contains:
 - Boot sequence instructions
 - Pointers to key context files
 - Core behaviors and constraints
+
+#### Self-Contained Identity Requirement (v2.5)
+
+**Critical**: CLAUDE.md must establish entity identity in the FIRST 30 lines for Claude Product Compatibility.
+
+**Why**: Different Claude products load context differently:
+- **Claude Code**: Has hooks, skills, boot sequences - can load kernel files dynamically
+- **Claude Cowork (Desktop)**: Only loads CLAUDE.md - no hooks, no skills, no boot
+- **Future products**: May have varying context loading mechanisms
+
+**Requirement**: Lines 1-30 of CLAUDE.md MUST contain:
+1. Entity name and primary identity statement
+2. Core purpose (1-2 sentences)
+3. Key personality traits
+4. Relationship to user (who they serve)
+
+**Structure pattern**:
+```markdown
+# [Entity Name]
+
+You are **[Name]**, [one-line identity statement].
+
+**Purpose**: [What you do and why]
+
+**Personality**: [Key traits, e.g., Enneagram type]
+- [Trait 1]
+- [Trait 2]
+- [Trait 3]
+
+**For [User]**: [How you serve them]
+
+---
+
+## [Rest of CLAUDE.md - boot sequences, context loading, etc.]
+```
+
+**Product-specific sections**:
+After the self-contained identity, include product-specific instructions:
+
+```markdown
+## For Claude Code Users
+
+Run `/session-start` for full context loading with:
+- Kernel files (role, principles, persona)
+- Memory surfacing
+- Inbox checking
+
+## For Claude Cowork Users
+
+Context is loaded from this file. For deeper context, reference:
+- `context/kernel/` for full identity
+- `active_work/current_objectives.md` for current focus
+```
+
+**Validation**: entity-diagnostic should WARN if lines 1-30 don't contain identity keywords
 
 ### context/kernel/role_definition.md
 
@@ -1638,6 +1693,71 @@ When birthing a Tier 2 entity:
 
 ---
 
+## Claude Product Compatibility
+
+### Overview
+
+Entities should be portable across Claude's product ecosystem. Different products have different context loading mechanisms:
+
+| Product | Context Loading | Hooks | Skills | Boot Sequence |
+|---------|-----------------|-------|--------|---------------|
+| **Claude Code** | CLAUDE.md + files | Yes | Yes | Full support |
+| **Claude Cowork** | CLAUDE.md only | No | No | Not available |
+| **API / SDK** | Programmatic | N/A | N/A | Custom |
+
+### Portability Requirements
+
+#### Tier 1: CLAUDE.md Self-Containment (Required)
+
+Every entity MUST have self-contained identity in CLAUDE.md lines 1-30:
+- Works in any Claude product without external file loading
+- Entity recognizes itself and can provide basic functionality
+- See "Self-Contained Identity Requirement" in CLAUDE.md section above
+
+#### Tier 2: Graceful Degradation (Recommended)
+
+Entities SHOULD degrade gracefully when advanced features unavailable:
+
+| Missing Feature | Behavior |
+|-----------------|----------|
+| Boot hooks | Proceed with CLAUDE.md identity only |
+| Skills | Use inline instructions instead |
+| Memory loading | Note limitation, work without history |
+| Inbox | Skip coordination, work standalone |
+
+#### Tier 3: Product-Specific Sections (Optional)
+
+CLAUDE.md MAY include product-specific guidance:
+
+```markdown
+## For Claude Code Users
+
+[Full boot sequence, skill invocation, etc.]
+
+## For Claude Cowork Users
+
+[Simplified instructions, manual context references]
+```
+
+### Testing Portability
+
+Before considering an entity complete, test in:
+1. **Claude Code** - Full functionality with boot sequence
+2. **Claude Cowork** - Identity recognition with CLAUDE.md only
+3. **Fresh session** - No prior context, entity still knows itself
+
+### Compatibility Matrix
+
+| Capability | Code | Cowork | API |
+|------------|------|--------|-----|
+| Identity recognition | Full | Full | Full |
+| Kernel loading | Auto | Manual | Programmatic |
+| Session continuity | Auto | Limited | Custom |
+| Skill invocation | Yes | No | Custom |
+| Cross-entity coordination | Full | Limited | Custom |
+
+---
+
 ## Token Budget Guidelines
 
 ### Thresholds
@@ -1885,6 +2005,57 @@ See `birth_protocol/agent_birth_protocol.md` for:
 
 ---
 
+## Recommended Infrastructure
+
+Optional but recommended tooling that enhances entity operation.
+
+### Session Memory (Cortex)
+
+**Tool**: [Cortex](https://github.com/hjertefolger/cortex) - Automatic session memory for Claude Code
+
+**Why**: Entities using Claude Code benefit from automatic session memory that:
+- Preserves context across sessions without manual export
+- Auto-saves before clear/compact (prevents context loss)
+- Provides semantic search across past sessions
+- Complements (doesn't replace) the curated memory system
+
+**Installation** (one-time, user-level):
+```bash
+# In any Claude Code session:
+/plugin marketplace add hjertefolger/cortex
+/plugin install cortex
+/cortex-setup
+/cortex:configure full  # or "essential" or "minimal"
+# Restart Claude Code
+```
+
+**Configuration Presets**:
+| Preset | Auto-Save | Pre-Clear Backup | Statusline |
+|--------|-----------|------------------|------------|
+| `full` | Every 5% context | Yes | Enabled |
+| `essential` | Every 10% context | Yes | Enabled |
+| `minimal` | Manual only | Yes | Hidden |
+
+**Scope**: User-level installation applies to ALL entity workspaces automatically. The `projectScope: true` setting keeps each entity's memories separate.
+
+**Relationship to Entity Memory**:
+| Aspect | Cortex | Entity Memory (`memory/`) |
+|--------|--------|---------------------------|
+| Purpose | "What happened" (raw) | "What I learned" (curated) |
+| Capture | Automatic (hooks) | Manual (skills) |
+| Storage | SQLite (`~/.cortex/`) | Markdown files |
+| Git tracked | No | Yes |
+| Search | Semantic (embeddings) | Frontmatter + grep |
+
+**Verification**:
+- `Ψ` indicator appears in Claude Code statusline
+- `/cortex:stats` shows memory statistics
+- Context restores on new session
+
+**Note**: Cortex is OPTIONAL. Entities function fully without it using the standard session-export workflow.
+
+---
+
 ## Version History
 
 | Version | Date | Changes |
@@ -1902,6 +2073,10 @@ See `birth_protocol/agent_birth_protocol.md` for:
 | 2.0 | January 20, 2026 | Added Plan Persistence section: persistent plans for multi-session work, plan lifecycle with human-in-loop, registry pattern, /persist-plan skill specification |
 | 2.1 | January 20, 2026 | Added Context Maps pattern (optional), Skill Classification (core/domain/custom), enhanced documentation for emerging patterns |
 | 2.2 | January 21, 2026 | Added Onboarding section (first-boot detection, progressive disclosure flow, state tracking), Fresh Start Testing section (automated validation, testing scenarios) |
+| 2.3 | January 22, 2026 | Added Context Map Distribution (pull/push flows, registry pattern), enhanced Context Map documentation |
+| 2.4 | January 22, 2026 | Added Error Handling & Recovery, Version Compatibility matrix, Coordination Edge Cases, Context Map Lifecycle, Plan vs Session Export guidance |
+| 2.5 | January 25, 2026 | **Claude Product Compatibility**: Self-contained identity requirement (lines 1-30), graceful degradation across Claude products (Code, Cowork, API), portability testing requirements, product-specific CLAUDE.md sections |
+| 2.6 | January 26, 2026 | **Recommended Infrastructure**: Added Cortex session memory as optional tooling, explains relationship to entity memory system |
 
 ---
 
