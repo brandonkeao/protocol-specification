@@ -99,7 +99,7 @@ The architecture is model-agnostic, but the implementation assumes Claude Code c
 
 ## Version
 
-**Current**: 1.8 | [Changelog](./CHANGELOG.md) | [License](./LICENSE)
+**Current**: 2.7 | [Changelog](./CHANGELOG.md) | [License](./LICENSE)
 
 ---
 
