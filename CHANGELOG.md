@@ -10,6 +10,24 @@ Track the evolution of ENTITY_SPEC.md over time.
 
 ---
 
+## [2.7] - 2026-01-31
+
+### Added
+- **Receiver-directory message routing**: New convention `messages_from_[entity]/` in receiver's directory, replacing sender-directory `messages_to_[parent]/`
+- **CLAUDE.md size guidance**: Max line targets per entity role (orchestrator ~150, domain specialist ~250, meta-entity ~200), what should/shouldn't be in CLAUDE.md
+- **context-health skill** (recommended for orchestrators): Automated context rot detection, staleness thresholds, volume measurement, duplicate detection
+- **Staleness thresholds** for content types: Kernel (<30d), Objectives (<7d), Learnings index (<7d), Session exports (<7d)
+- Compatibility matrix row for 2.6 → 2.7
+
+### Deprecated
+- `messages_to_[parent]/` sender-directory convention — migrate to `messages_from_[entity]/` in receiver
+
+### Notes
+- Backwards-compatible (MINOR version)
+- Governance reference: `shared_memory/governance/message-routing.md`
+
+---
+
 ## [2.6] - 2026-01-26
 
 ### Added

@@ -1,8 +1,8 @@
 # Entity Specification Protocol
 
-**Version**: 2.6
+**Version**: 2.7
 **Created**: January 2026
-**Updated**: January 26, 2026
+**Updated**: January 31, 2026
 **Purpose**: Canonical specification for Jane-like entities
 
 ---
@@ -37,6 +37,9 @@ A Jane-like entity is an AI agent with persistent identity, memory, and structur
 | 2.1 | 2.2 | No | Add onboarding state file (Tier 2) |
 | 2.2 | 2.3 | No | None |
 | 2.3 | 2.4 | No | None |
+| 2.4 | 2.5 | No | Update CLAUDE.md lines 1-30 for identity |
+| 2.5 | 2.6 | No | None |
+| 2.6 | 2.7 | No | Migrate `messages_to_[parent]/` to `messages_from_[entity]/` in receiver |
 
 ### Migration Guide
 
@@ -479,6 +482,34 @@ Context is loaded from this file. For deeper context, reference:
 
 **Validation**: entity-diagnostic should WARN if lines 1-30 don't contain identity keywords
 
+#### CLAUDE.md Size Guidance (v2.7)
+
+CLAUDE.md should be lean -- identity + boot instructions + pointers. Detailed governance, decision frameworks, and methodology belong in kernel files.
+
+**Rationale**: CLAUDE.md is always loaded by Claude Code AND kernel files are loaded during boot. Duplicating content wastes context budget and creates maintenance divergence risk.
+
+**Size targets**:
+
+| Entity Role | Max Lines | Rationale |
+|-------------|-----------|-----------|
+| Orchestrator | ~150 | Identity + routing summary + boot + pointers |
+| Domain Specialist | ~250 | Identity + domain summary + boot + pointers |
+| Meta-Entity | ~200 | Identity + spec summary + boot + pointers |
+
+**What MUST be in CLAUDE.md**:
+- Self-contained identity (lines 1-30, per v2.5)
+- Boot trigger / session-start instructions
+- Product-specific sections (Code vs Cowork)
+- Pointers to kernel files
+
+**What should NOT be in CLAUDE.md**:
+- Full decision frameworks (put in `operating_principles.md`)
+- Detailed governance rules (put in kernel files)
+- Domain methodology (put in domain-specific kernel files)
+- Relationship details (put in `persona_profile.md`)
+
+**Validation**: entity-diagnostic should WARN if CLAUDE.md exceeds size target for entity role.
+
 ### context/kernel/role_definition.md
 
 - Primary role and purpose
@@ -768,6 +799,29 @@ The `expert-review` skill provides configurable expert perspectives via `--lens`
 - `/expert-review --lens=product` - Product management perspective
 
 This pattern replaces the deprecated "execution lens" approach by consolidating expert thinking into a single configurable skill.
+
+**Context health skill** (recommended for orchestrators):
+
+| Skill | Purpose | Portability |
+|-------|---------|-------------|
+| `context-health` | Automated context rot detection and health scoring | Portable |
+
+The `context-health` skill provides:
+- Volume measurement (kernel + conditional, zone classification)
+- Staleness detection against defined thresholds
+- Prominence ratio calculation (kernel vs conditional context)
+- Duplicate content detection
+- Learnings index completeness check
+- Inbox backlog monitoring
+
+**Staleness thresholds** (recommended defaults):
+
+| Content Type | Fresh | Aging | Stale |
+|-------------|-------|-------|-------|
+| Kernel files | < 30 days | 30-60 days | > 60 days |
+| Objectives | < 7 days | 7-14 days | > 14 days |
+| Learnings index | < 7 days | 7-14 days | > 14 days |
+| Session exports | < 7 days | 7-14 days | > 14 days |
 
 ### Skill Structure
 
@@ -1611,10 +1665,17 @@ This section is purely additive. Entities not implementing plan persistence are 
 
 Domain specialists communicate with their parent (orchestrator) through two channels:
 
-#### 1. messages_to_[parent]/ (Informal, Quick)
+#### 1. messages_from_[entity]/ (Receiver-Directory Convention)
 
-**Location**: `memory/messages_to_jane/` (or appropriate parent)
-**Purpose**: Quick notes, questions, status updates
+**Convention (v2.7)**: Messages live in the RECEIVER's directory, named by sender.
+
+**Location**: `[receiver]/memory/messages_from_[sender]/`
+
+**Examples**:
+- EPD messages to Jane: `jane/memory/messages_from_epd/`
+- Engineer messages to Jane: `jane/memory/messages_from_engineer/`
+- Jane messages to Protocol: `protocol/memory/messages_from_jane/` (peer) or `protocol/memory/inbox/` (formal)
+
 **Format**: Simple markdown, no YAML required
 
 **File naming**: `YYYY-MM-DD_[slug].md`
@@ -1642,6 +1703,10 @@ Domain specialists communicate with their parent (orchestrator) through two chan
 - Action items for parent
 - Non-blocking requests
 
+**Governance**: `shared_memory/governance/message-routing.md` is the canonical reference for all routing conventions.
+
+> **Deprecated (v2.7)**: The `messages_to_[parent]/` convention (sender-directory) is deprecated. Migrate to `messages_from_[entity]/` in the receiver's directory. Existing `messages_to_[parent]/` directories should be removed after migration.
+
 #### 2. Inbox Handoff (Formal, Tracked)
 
 **Location**: `/[parent]/memory/inbox/`
@@ -1660,7 +1725,7 @@ Domain specialists communicate with their parent (orchestrator) through two chan
 
 | Channel | Check Frequency | Responsibility |
 |---------|-----------------|----------------|
-| `messages_to_[parent]/` | Each parent session boot | Parent entity |
+| `messages_from_[entity]/` | Each receiver session boot | Receiver entity |
 | Inbox handoffs | Each session boot | Receiving entity |
 
 **Note**: Parents check child message directories during their own boot sequence, not continuously.
@@ -1677,17 +1742,17 @@ Domain specialists communicate with their parent (orchestrator) through two chan
 
 | Item Type | Retention | Archive Process |
 |-----------|-----------|-----------------|
-| `messages_to_[parent]/` | Until acknowledged | Parent moves to `archive/` or deletes after processing |
+| `messages_from_[entity]/` | Until acknowledged | Receiver moves to `archive/` or deletes after processing |
 | Inbox items (completed) | 14 days | Move to `memory/archive/inbox/` after 14 days |
 | Inbox items (dismissed) | 7 days | Delete after 7 days |
 
-**Cleanup responsibility**: Each entity manages its own inbox cleanup. Parents manage their `messages_from_[child]/` cleanup.
+**Cleanup responsibility**: Each entity manages its own inbox cleanup. Receivers manage their `messages_from_[entity]/` cleanup.
 
 ### Setup During Birth
 
 When birthing a Tier 2 entity:
 
-1. Create `memory/messages_to_jane/` directory (or appropriate parent)
+1. Create message directory in receiver entity (e.g., `jane/memory/messages_from_[newentity]/`)
 2. Document escalation path in CLAUDE.md "Relationship" section
 3. Add to operating_principles.md: when to escalate
 
@@ -2077,6 +2142,7 @@ Optional but recommended tooling that enhances entity operation.
 | 2.4 | January 22, 2026 | Added Error Handling & Recovery, Version Compatibility matrix, Coordination Edge Cases, Context Map Lifecycle, Plan vs Session Export guidance |
 | 2.5 | January 25, 2026 | **Claude Product Compatibility**: Self-contained identity requirement (lines 1-30), graceful degradation across Claude products (Code, Cowork, API), portability testing requirements, product-specific CLAUDE.md sections |
 | 2.6 | January 26, 2026 | **Recommended Infrastructure**: Added Cortex session memory as optional tooling, explains relationship to entity memory system |
+| 2.7 | January 31, 2026 | **Operational Improvements**: Message routing convention (receiver-directory `messages_from_[entity]/`, deprecates sender-directory `messages_to_[parent]/`), CLAUDE.md size guidance (<150 lines orchestrators, <250 domain specialists), context-health skill (recommended for orchestrators), staleness thresholds |
 
 ---
 
