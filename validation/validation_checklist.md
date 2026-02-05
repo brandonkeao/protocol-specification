@@ -1,7 +1,7 @@
 # Entity Validation Checklist
 
-**Version**: 1.3
-**Derived From**: ENTITY_SPEC.md v1.8
+**Version**: 1.4
+**Derived From**: ENTITY_SPEC.md v2.4
 **Purpose**: Systematic validation of entities against specification
 
 ---
@@ -309,4 +309,4 @@ ls -la .claude/skills/*/SKILL.md
 ---
 
 **Maintained by**: Protocol (Meta-Entity)
-**Spec Reference**: ENTITY_SPEC.md v1.8
+**Spec Reference**: ENTITY_SPEC.md v2.4

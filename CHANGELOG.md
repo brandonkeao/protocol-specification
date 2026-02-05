@@ -41,6 +41,7 @@ Track the evolution of ENTITY_SPEC.md over time.
 - `birth_protocol/agent_birth_protocol.md` - Complete entity birth process with infrastructure verification
 
 ### Notes
+- Backwards-compatible (MINOR version)
 - Cortex is user-level (applies to all entity workspaces automatically)
 - `projectScope: true` keeps memories separated per entity
 - Complements, doesn't replace, the existing entity memory system
@@ -55,8 +56,10 @@ Track the evolution of ENTITY_SPEC.md over time.
   - Graceful degradation across Claude products (Code, Cowork, API)
   - Portability testing requirements
   - Product-specific CLAUDE.md sections
+- **Version Compatibility Matrix** extended with v2.4 → v2.5 migration
 
 ### Notes
+- Backwards-compatible (MINOR version)
 - Critical for Claude Cowork compatibility (no hooks/skills, only CLAUDE.md loaded)
 - entity-diagnostic should WARN if lines 1-30 don't contain identity keywords
 
